@@ -4,6 +4,6 @@ table! {
         in_use -> Integer,
         gpio_mode -> Nullable<Text>,
         gpio_level -> Nullable<Text>,
-        last_change -> Nullable<Text>,
+        last_change -> Nullable<Timestamp>,
     }
 }

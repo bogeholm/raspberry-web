@@ -4,7 +4,7 @@ CREATE TABLE gpio_state (
     in_use	INTEGER NOT NULL DEFAULT 0,
 	gpio_mode  	TEXT,
 	gpio_level	TEXT,
-	last_change	TEXT
+	last_change	TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO gpio_state (
