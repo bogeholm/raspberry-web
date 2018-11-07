@@ -6,25 +6,23 @@
 #![allow(unused_variables)]
 
 extern crate chrono;
-#[macro_use] extern crate diesel;
+#[macro_use] 
+extern crate diesel;
 extern crate dotenv;
 extern crate env_logger;
-#[macro_use] extern crate log;
-//extern crate serde;
+#[macro_use] 
+extern crate log;
 #[macro_use] extern crate serde_derive;
-//use log::Level;
+extern crate r2d2;
 
 mod schema;
 mod models;
 mod db_setup;
 mod db_utilities;
 
-use diesel::prelude::*;
+use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
-
 use std::env;
-//use models::Gpio;
-//use schema::gpio_state::dsl::*;
 
 fn main() {
     // Read environment variables from .env - must come before env_logger::init()
@@ -33,22 +31,12 @@ fn main() {
     // Initialize logger
     env_logger::init();
     
-    // Get database connection
-    // TODO: Create connection pool
+    // Create database connection pool
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL not found");
-    let connection = db_setup::establish_connection(&database_url)
-        .expect("Could not connect to database");
-    
+    let manager = ConnectionManager::<SqliteConnection>::new(database_url);
+    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create r2d2 pool.");
+    let connection = pool.get().expect("Failed to acquire connection");
+
     // Read environment variables into database
     db_setup::read_env_setup_database(&connection);
 }
-
-
-
-
-
-
-
-
-
-
