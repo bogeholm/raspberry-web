@@ -2,12 +2,10 @@ use diesel::prelude::*;
 use std::env;
 use schema::gpio_state::dsl::*;
 use db_utilities::*;
-
-
-pub fn establish_connection(database_url: &str) -> Result<SqliteConnection, ConnectionError> {
-    let connection = SqliteConnection::establish(database_url)?;
-        Ok(connection)
-}
+use std::io::Error as ioError;
+use std::collections::HashMap;
+use std::num::ParseIntError;
+use std::env::VarError;
 
 pub fn read_env_delimiter() -> String {
     // Get delimiter from .env - if not set, use 
@@ -26,23 +24,72 @@ pub fn read_env_delimiter() -> String {
     delimiter
 }
 
+pub struct EnvVariable{
+    key: &'static str,
+    value: Option<Vec<i32>>,
+}
 
-pub fn read_env_setup_database(conn: &SqliteConnection) {
+pub struct GpioSetup {
+    pub in_use: Option<Vec<i32>>,
+    pub mode_output: Vec<i32>,
+    pub mode_input: Vec<i32>,
+    pub level_low: Vec<i32>,
+    pub level_high: Vec<i32>,
+}
+
+// Read in_use          < OK
+// Read gpio_mode
+// Read gpio_level
+// Read into struct?
+
+// Given a string (read from env_var), read into vec
+pub fn parse_string_to_vec(delimiter: &str, env_var: &str) -> Result<Vec<i32>, ParseIntError> {
+    
+    // https://users.rust-lang.org/t/error-handling-and-iterator-map-collect/4313
+    // You can actually collect to a Result<Vec<u8>, _> and skip the .ok().expect(...) part.
+    let vec: Result<Vec<i32>, _> = env_var.split(&delimiter)
+        .map(|x| x.parse::<i32>())
+        .collect();
+        vec
+}
+
+// Read env_var into string, handle errors
+pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
+    let env_var = env::var(var_to_read)?;
+    Ok(env_var)
+}
+
+
+pub fn read_env_to_hashmap() {
+    let mut parsed_variables: HashMap<&str, Option<Vec<i32>>> = HashMap::new();
+
     let delimiter = read_env_delimiter();
 
-    // TODO: should not panic
-    let gpios_used = env::var("GPIOS_IN_USE").expect("No GPIOs initialized");
+    let env_keys = vec![
+        "GPIOS_IN_USE",
+        "GPIOS_MODE_OUTPUT",
+        "GPIOS_MODE_INPUT",
+        "GPIOS_LEVEL_LOW",
+        "GPIOS_LEVEL_HIGH"
+    ]; 
 
-    
+    for env_key in env_keys {
+        let env_str = read_env_to_str(env_key);
+        parsed_variables.insert(env_key, None);
 
-    // TODO: Create separate function
-    let vec = gpios_used.split(&delimiter)
-        .map(|x| x.parse::<i32>().expect("EVIL"))
-        .collect::<Vec<i32>>();
+        if let Ok(env_var) = env_str {
+            let env_vec = parse_string_to_vec(&delimiter, &env_var);
 
-    for idx in vec {
-        //let updated_row = diesel::update(gpio_state.filter(gpio_id.eq(idx)))
-        //    .set(in_use.eq(1));
-        set_gpio_state_db(idx, 1, conn);        
+            if let Ok(parsed_vec) = env_vec{
+                println!("{}: {:?}", env_key, parsed_vec);
+                parsed_variables.insert(&env_key, Some(parsed_vec));
+            }   
+        }
+    }
+
+    for (contact, number) in parsed_variables.iter() {
+        println!("Calling {}: {:?}", contact, number); 
     }
 }
+
+// TODO: Tests

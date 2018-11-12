@@ -23,6 +23,7 @@ mod db_utilities;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
+use std::collections::HashMap;
 
 fn main() {
     // Read environment variables from .env - must come before env_logger::init()
@@ -38,5 +39,6 @@ fn main() {
     let connection = pool.get().expect("Failed to acquire connection");
 
     // Read environment variables into database
-    db_setup::read_env_setup_database(&connection);
+    //db_setup::read_env_setup_database(&connection);
+    db_setup::read_env_to_hashmap();
 }
