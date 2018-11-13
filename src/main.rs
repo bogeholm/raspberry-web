@@ -40,7 +40,15 @@ fn main() {
 
     // Read environment variables into database
     //db_setup::read_env_setup_database(&connection);
-    let parsed_variables = db_setup::read_env_to_hashmap();
+    let env_keys = vec![
+        "GPIOS_IN_USE",
+        "GPIOS_MODE_OUTPUT",
+        "GPIOS_MODE_INPUT",
+        "GPIOS_LEVEL_LOW",
+        "GPIOS_LEVEL_HIGH"
+    ];
+
+    let parsed_variables = db_setup::read_env_to_hashmap(&env_keys);
 
 
     for (key, val) in parsed_variables.iter() {
