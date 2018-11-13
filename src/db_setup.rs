@@ -55,8 +55,12 @@ pub fn parse_string_to_vec(delimiter: &str, parse_str: &str) -> Result<Vec<i32>,
 
 // Read env_var into string, handle errors
 pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
-    let env_var = env::var(var_to_read)?;
-    Ok(env_var)
+    let env_var = env::var(var_to_read);
+    
+    if let Ok(read_str) = env_var {
+        info!("Reading environment variable {}: {}", var_to_read, read_str);
+    }
+   
 }
 
 
