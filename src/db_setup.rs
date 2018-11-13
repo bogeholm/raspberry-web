@@ -43,11 +43,11 @@ pub struct GpioSetup {
 // Read into struct?
 
 // Given a string (read from env_var), read into vec
-pub fn parse_string_to_vec(delimiter: &str, env_var: &str) -> Result<Vec<i32>, ParseIntError> {
+pub fn parse_string_to_vec(delimiter: &str, parse_str: &str) -> Result<Vec<i32>, ParseIntError> {
     
     // https://users.rust-lang.org/t/error-handling-and-iterator-map-collect/4313
     // You can actually collect to a Result<Vec<u8>, _> and skip the .ok().expect(...) part.
-    let vec: Result<Vec<i32>, _> = env_var.split(&delimiter)
+    let vec: Result<Vec<i32>, _> = parse_str.split(&delimiter)
         .map(|x| x.parse::<i32>())
         .collect();
         vec
@@ -60,18 +60,17 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
 }
 
 
-pub fn read_env_to_hashmap() {
-    let mut parsed_variables: HashMap<&str, Option<Vec<i32>>> = HashMap::new();
-
-    let delimiter = read_env_delimiter();
-
+pub fn read_env_to_hashmap() -> HashMap<&'static str, Option<Vec<i32>>> {
+    // Read keys from .env, split at delimiter and create hashmap
     let env_keys = vec![
         "GPIOS_IN_USE",
         "GPIOS_MODE_OUTPUT",
         "GPIOS_MODE_INPUT",
         "GPIOS_LEVEL_LOW",
         "GPIOS_LEVEL_HIGH"
-    ]; 
+    ];
+    let delimiter = read_env_delimiter();
+    let mut parsed_variables: HashMap<&'static str, Option<Vec<i32>>> = HashMap::new();
 
     for env_key in env_keys {
         let env_str = read_env_to_str(env_key);
@@ -81,15 +80,12 @@ pub fn read_env_to_hashmap() {
             let env_vec = parse_string_to_vec(&delimiter, &env_var);
 
             if let Ok(parsed_vec) = env_vec{
-                println!("{}: {:?}", env_key, parsed_vec);
                 parsed_variables.insert(&env_key, Some(parsed_vec));
             }   
         }
     }
 
-    for (contact, number) in parsed_variables.iter() {
-        println!("Calling {}: {:?}", contact, number); 
-    }
+    return parsed_variables;
 }
 
 // TODO: Tests

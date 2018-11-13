@@ -40,5 +40,11 @@ fn main() {
 
     // Read environment variables into database
     //db_setup::read_env_setup_database(&connection);
-    db_setup::read_env_to_hashmap();
+    let parsed_variables = db_setup::read_env_to_hashmap();
+
+
+    for (key, val) in parsed_variables.iter() {
+        println!("Got {}: {:?}", key, val); 
+    }
+
 }
