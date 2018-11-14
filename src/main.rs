@@ -40,6 +40,8 @@ fn main() {
 
     // Read environment variables into database
     //db_setup::read_env_setup_database(&connection);
+    db_utilities::reset_table_gpio_state(&connection);
+
     let env_keys = vec![
         "GPIOS_IN_USE",
         "GPIOS_MODE_OUTPUT",//"GPIOS_MODE_INPUT",

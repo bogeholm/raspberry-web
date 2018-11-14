@@ -83,13 +83,8 @@ pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str
     return parsed_variables;
 }
 
-// 1) Set GPIO_IN_USE
-// 2) Set mode OUTPUT
 
 pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &SqliteConnection) {
-    for (key, val) in map.iter() {
-        println!("Got {}: {:?}", key, val); 
-    }
 
     // Should be set to 1
     match map.get("GPIOS_IN_USE"){
