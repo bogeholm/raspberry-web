@@ -1,7 +1,7 @@
 use diesel::prelude::*;
 use std::env;
 use schema::gpio_state::dsl::*;
-use db_utilities::*;
+use db_utilities::{set_gpio_in_use, set_gpio_mode, set_gpio_level};
 use std::io::Error as ioError;
 use std::collections::HashMap;
 use std::num::ParseIntError;
@@ -63,24 +63,81 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
 }
 
 
-pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str, Option<Vec<i32>>> {
+pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str, Vec<i32>> {
     
     let delimiter = read_env_delimiter();
-    let mut parsed_variables: HashMap<&'static str, Option<Vec<i32>>> = HashMap::new();
+    let mut parsed_variables: HashMap<&'static str, Vec<i32>> = HashMap::new();
 
     for env_key in env_keys {
         let env_str = read_env_to_str(env_key);
-        parsed_variables.insert(env_key, None);
+        //parsed_variables.insert(env_key, None);
 
         if let Ok(env_var) = env_str {
             let env_vec = parse_string_to_vec(&delimiter, &env_var);
 
             if let Ok(parsed_vec) = env_vec{
-                parsed_variables.insert(&env_key, Some(parsed_vec));
+                parsed_variables.insert(&env_key, parsed_vec);
             }   
         }
     }
     return parsed_variables;
 }
 
-// TODO: Tests
+// 1) Set GPIO_IN_USE
+// 2) Set mode OUTPUT
+
+pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &SqliteConnection) {
+    for (key, val) in map.iter() {
+        println!("Got {}: {:?}", key, val); 
+    }
+
+    // Should be set to 1
+    match map.get("GPIOS_IN_USE"){
+        Some(vec) => {
+            for idx in vec.iter(){
+                set_gpio_in_use(*idx, 1, conn); // Logging happens in db_utilities
+            }     
+        },
+        _ => info!("GPIOS_IN_USE not set")
+    }
+
+    // Should be set to OUTPUT
+    match map.get("GPIOS_MODE_OUTPUT") {
+        Some(vec) => {
+            for idx in vec.iter(){
+                set_gpio_mode(*idx, "OUTPUT", conn); // Logging happens in db_utilities
+            }     
+        }
+        _ => info!("GPIOS_MODE_OUTPUT not set")
+    }
+
+    // Should be set to INPUT
+    match map.get("GPIOS_MODE_INPUT") {
+        Some(vec) => {
+            for idx in vec.iter(){
+                set_gpio_mode(*idx, "INPUT", conn); // Logging happens in db_utilities
+            }     
+        }
+        _ => info!("GPIOS_MODE_INPUT not set")
+    }
+
+    // Should be set to LOW
+    match map.get("GPIOS_LEVEL_LOW") {
+        Some(vec) => {
+            for idx in vec.iter(){
+                set_gpio_level(*idx, "LOW", conn); // Logging happens in db_utilities
+            }     
+        }
+        _ => info!("GPIOS_LEVEL_LOW not set")
+    }
+
+    // Should be set to LOW
+    match map.get("GPIOS_LEVEL_HIGH") {
+        Some(vec) => {
+            for idx in vec.iter(){
+                set_gpio_level(*idx, "HIGH", conn); // Logging happens in db_utilities
+            }     
+        }
+        _ => info!("GPIOS_LEVEL_HIGH not set")
+    }
+}

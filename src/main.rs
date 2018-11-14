@@ -42,17 +42,12 @@ fn main() {
     //db_setup::read_env_setup_database(&connection);
     let env_keys = vec![
         "GPIOS_IN_USE",
-        "GPIOS_MODE_OUTPUT",
-        "GPIOS_MODE_INPUT",
-        "GPIOS_LEVEL_LOW",
-        "GPIOS_LEVEL_HIGH"
+        "GPIOS_MODE_OUTPUT",//"GPIOS_MODE_INPUT",
+        "GPIOS_LEVEL_LOW",//"GPIOS_LEVEL_HIGH"
     ];
 
     let parsed_variables = db_setup::read_env_to_hashmap(&env_keys);
 
-
-    for (key, val) in parsed_variables.iter() {
-        println!("Got {}: {:?}", key, val); 
-    }
+    db_setup::commit_variables_to_db(&parsed_variables, &connection);
 
 }
