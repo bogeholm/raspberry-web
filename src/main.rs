@@ -20,14 +20,13 @@ extern crate r2d2;
 mod app;
 mod schema;
 mod models;
-mod db;
 mod db_setup;
 mod db_utilities;
 
 use actix::prelude::*;
 use actix_web::server;
 use actix_web::{App, Path, State, http};
-use db::DbExecutor;
+use models::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::collections::HashMap;
@@ -64,6 +63,7 @@ fn main() {
     db_setup::commit_variables_to_db(&parsed_variables, &connection);
 
     let sys = actix::System::new("raspberry-web");
+    // https://github.com/actix/actix-website/blob/master/content/docs/databases.md
     let addr = SyncArbiter::start(2, move || DbExecutor(pool.clone()));
 
     server::new( move || {
@@ -75,7 +75,7 @@ fn main() {
          .expect(&format!("Cannot bind to '{}:{}'", hostname, port))
          .start();
 
-    sys.run();
+    let _ = sys.run();
 
 
     
@@ -86,7 +86,9 @@ pub struct AppState {
     pub db: Addr<DbExecutor>,
 }
 
-struct MyApp {msg: &'static str}
+struct CreateUser {
+    name: String,
+}
 
 #[derive(Deserialize)]
 struct Info {
@@ -97,20 +99,3 @@ struct Info {
 fn index(state: State<AppState>, info: Path<Info>) -> String {
     format!("{}!", info.username)
 }
-
-
-
-
-
-
-
-// Start actix system
-    //let sys = actix::System::new("raspberry-web");
-    //let addr = SyncArbiter::start(2, move || DbExecutor(pool.clone()));
-
-    // server::new(move || app::create_app(addr.clone()))
-    //     .bind(format!("{}:{}", hostname, port))
-    //     .expect(&format!("Cannot bind to '{}:{}'", hostname, port))
-    //     .start();
-
-    // sys.run();

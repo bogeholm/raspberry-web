@@ -1,7 +1,7 @@
 use actix::prelude::*;
 use actix_web::*;
 use actix_web::{middleware::Logger, App, http::Method, HttpRequest, HttpResponse, State, Responder};
-use db::DbExecutor;
+use models::DbExecutor;
 
 pub struct AppState {
     pub db: Addr<DbExecutor>,
