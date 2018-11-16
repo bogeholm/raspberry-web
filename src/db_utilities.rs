@@ -3,6 +3,7 @@ use schema::gpio_state::dsl::*;
 use chrono::{Local};
 
 pub fn reset_table_gpio_state(conn: &SqliteConnection) {
+    info!("Resetting all fields in table 'gpio_state'...");
     let gpio_array: [i32; 28] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
         // GPIO 17 - 20 do not exist
         21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
