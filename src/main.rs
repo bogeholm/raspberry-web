@@ -25,7 +25,7 @@ mod db_utilities;
 
 use actix::prelude::*;
 use actix_web::server;
-use actix_web::{App, Path, State, http};
+use actix_web::{App, Path, State, http, HttpResponse};
 use models::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
@@ -64,11 +64,12 @@ fn main() {
 
     let sys = actix::System::new("raspberry-web");
     // https://github.com/actix/actix-website/blob/master/content/docs/databases.md
+    // https://docs.rs/actix-web/0.6.3/actix_web/struct.State.html
     let addr = SyncArbiter::start(2, move || DbExecutor(pool.clone()));
 
     server::new( move || {
         App::with_state(AppState{db: addr.clone()}).resource(
-        "/{username}/index.html",                      // <- define path parameters
+        "/state/{id}",                      // <- define path parameters
         |r| r.method(http::Method::GET).with(index)) // <- use `with` extractor
     })
          .bind(format!("{}:{}", hostname, port))
@@ -86,16 +87,14 @@ pub struct AppState {
     pub db: Addr<DbExecutor>,
 }
 
-struct CreateUser {
-    name: String,
-}
-
 #[derive(Deserialize)]
 struct Info {
-    username: String,
+    id: String,
 }
 
 /// extract path info using serde
-fn index(state: State<AppState>, info: Path<Info>) -> String {
-    format!("{}!", info.username)
+fn index(state: State<AppState>, info: Path<Info>) -> HttpResponse {
+    HttpResponse::Ok()
+        .content_type("plain/text")
+        .body(format!("{}", info.id))
 }

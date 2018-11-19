@@ -18,8 +18,7 @@ impl Actor for DbExecutor {
     type Context = SyncContext<Self>;
 }
 
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]// -> #[macro_use] extern crate serde_derive;
-//#[derive(Debug, Queryable, Insertable)]
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "gpio_state"]
 pub struct Gpio {
     pub gpio_id: i32,               // 0..16 + 21..31
@@ -27,4 +26,10 @@ pub struct Gpio {
     pub gpio_mode: String,          // INPUT or OUTPUT
     pub gpio_level: String,         // HIGH or LOW
     pub last_change: NaiveDateTime  // Timestamp
+}
+
+impl Gpio {
+    pub fn in_use(self) -> bool {
+        self.in_use == 1
+    }
 }
