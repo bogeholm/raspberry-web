@@ -25,11 +25,17 @@ pub struct Gpio {
     pub in_use: i32,                // 0 or 1
     pub gpio_mode: String,          // INPUT or OUTPUT
     pub gpio_level: String,         // HIGH or LOW
-    pub last_change: NaiveDateTime  // Timestamp
+    pub last_change: String         // Timestamp
+}
+
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[table_name = "gpio_state"]
+pub struct GetState {
+    pub gpio_id: i32,
 }
 
 impl Gpio {
-    pub fn in_use(self) -> bool {
+    pub fn set_in_use(self) -> bool {
         self.in_use == 1
     }
 }

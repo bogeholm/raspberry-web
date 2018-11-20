@@ -16,7 +16,7 @@ pub fn reset_table_gpio_state(conn: &SqliteConnection) {
         let result = diesel::update(target)
             .set((
                 in_use.eq(0), 
-                last_change.eq(Local::now().naive_local()),
+                last_change.eq(Local::now().naive_local().to_string()),
                 gpio_mode.eq(""),
                 gpio_level.eq("")
                 ))
@@ -41,7 +41,9 @@ pub fn set_gpio_in_use(id: i32, state: i32, conn: &SqliteConnection) {
     let target = gpio_state.filter(gpio_id.eq(id));
     
     let result = diesel::update(target)
-        .set((in_use.eq(state), last_change.eq(Local::now().naive_local())))
+        .set((in_use.eq(state), 
+            last_change.eq(Local::now().naive_local().to_string()
+            )))
         .execute(conn);
         
     match result {
@@ -62,7 +64,9 @@ pub fn set_gpio_mode(id: i32, mode: &str, conn: &SqliteConnection) {
     let target = gpio_state.filter(gpio_id.eq(id));
     
     let result = diesel::update(target)
-        .set((gpio_mode.eq(mode), last_change.eq(Local::now().naive_local())))
+        .set((gpio_mode.eq(mode), 
+            last_change.eq(Local::now().naive_local().to_string()
+            )))
         .execute(conn);
         
     match result {
@@ -83,7 +87,9 @@ pub fn set_gpio_level(id: i32, level: &str, conn: &SqliteConnection) {
     let target = gpio_state.filter(gpio_id.eq(id));
     
     let result = diesel::update(target)
-        .set((gpio_level.eq(level), last_change.eq(Local::now().naive_local())))
+        .set((gpio_level.eq(level), 
+            last_change.eq(Local::now().naive_local().to_string()
+        )))
         .execute(conn);
         
     match result {
@@ -98,3 +104,7 @@ pub fn set_gpio_level(id: i32, level: &str, conn: &SqliteConnection) {
         Err(err) => error!("Failed to update 'gpio_level={}' for GPIO #{}: {:?}", level, id, err),
         }
 }
+
+
+// TODO: Testing
+// https://github.com/diesel-rs/diesel/blob/master/diesel_tests/tests/select.rs
