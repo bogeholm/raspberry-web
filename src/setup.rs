@@ -1,7 +1,7 @@
 use diesel::prelude::*;
 use std::env;
 use schema::gpio_state::dsl::*;
-use db_utilities::{set_gpio_in_use, set_gpio_mode, set_gpio_level};
+use utilities::{set_gpio_in_use, set_gpio_mode, set_gpio_level};
 use std::io::Error as ioError;
 use std::collections::HashMap;
 use std::num::ParseIntError;

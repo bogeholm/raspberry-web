@@ -20,8 +20,8 @@ extern crate r2d2;
 mod app;
 mod schema;
 mod models;
-mod db_setup;
-mod db_utilities;
+mod setup;
+mod utilities;
 
 use actix::prelude::*;
 use actix_web::server;
@@ -54,7 +54,7 @@ fn main() {
     let connection = pool.get().expect("Failed to acquire connection");
 
     // Reset database
-    db_utilities::reset_table_gpio_state(&connection); // Will log errors / warnings
+    utilities::reset_table_gpio_state(&connection); // Will log errors / warnings
 
     // Read these variables from .env
     let env_keys = vec![
@@ -64,8 +64,8 @@ fn main() {
     ];
 
     // Parse env_keys, commit to database
-    let parsed_variables = db_setup::read_env_to_hashmap(&env_keys);
-    db_setup::commit_variables_to_db(&parsed_variables, &connection); // Will log errors / warnings
+    let parsed_variables = setup::read_env_to_hashmap(&env_keys);
+    setup::commit_variables_to_db(&parsed_variables, &connection); // Will log errors / warnings
 
     let sys = actix::System::new("raspberry-web");
     // https://github.com/actix/actix-website/blob/master/content/docs/databases.md
