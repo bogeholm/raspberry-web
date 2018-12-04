@@ -71,7 +71,7 @@ fn main() {
     // https://github.com/actix/actix-website/blob/master/content/docs/databases.md
     // https://docs.rs/actix-web/0.6.3/actix_web/struct.State.html
     let addr = SyncArbiter::start(3, move || DbExecutor(pool.clone()));
-
+/*
     server::new( move || {
         // TODO: Add logging
         App::with_state(AppState{db: addr.clone()})
@@ -84,84 +84,6 @@ fn main() {
         .bind(format!("{}:{}", hostname, port))
         .expect(&format!("Cannot bind to '{}:{}'", hostname, port))
         .start();
-    /*
-    // Test only
-    let x = gpio_state
-            .filter(gpio_id.eq(2))
-            .load::<models::Gpio>(&connection).unwrap();
-    assert!(x.len() == 1);
-    println!("{:?}", x[0].gpio_level);
-    */
+*/
     let _ = sys.run();
-}
-
-pub struct AppState {
-    pub db: Addr<DbExecutor>,
-}
-
-impl Message for GetState {
-    type Result = Result<GetState, Error>;
-}
-
-// extract path info using serde
-// TODO: Async
-fn get_state(
-        (state, info): (State<AppState>, Path<GetState>),
-        ) -> HttpResponse {
-    info!("Received {:?}", info);
-    //let this_id = info[0].gpio_id;
-    
-    HttpResponse::Ok()
-        .content_type("plain/text")
-        .body(format!("{}", info.gpio_id))
-}
-
-impl Handler<GetState> for DbExecutor {
-    type Result = Result<GetState, Error>;
-    
-    fn handle(&mut self, msg: GetState, _: &mut Self::Context) -> Self::Result {
-        use self::schema::gpio_state::dsl::*;
-        let conn: &SqliteConnection = &self.0.get().unwrap(); // TODO
-
-        //let gpio_id = &msg.gpio_id;
-        info!("GetState: {}", 2);
-        println!("Hello!");
-        let gpio_vec = gpio_state
-            .filter(gpio_id.eq(&msg.gpio_id)) // TODO ;)
-            .load::<models::Gpio>(conn)//.unwrap();
-            .map_err(|_| error::ErrorInternalServerError("Error loading person"))?;
-
-        Ok(GetState{gpio_id: gpio_vec[0].gpio_id})
-
-        // match x {
-        //     Ok(val) => {
-        //         info!("Logging val: {}", val[0].gpio_level);
-        //         Ok(GetState{gpio_id: 2})
-        //     }
-        //     Err(err) => {
-        //         //err.into()
-        //         Err(error::ErrorInternalServerError("Erroneous error message"))
-        //     }
-        
-        //x[0].gpio_level
-
-        //Ok(x.pop().unwrap())
-
-        /*
-        match x {
-            Ok(val) => {
-                val
-            }
-            Err(err) => {
-                err
-            }
-        }
-        */
-        
-        //assert!(x.len() == 1);
-        //println!("{:?}", x[0].gpio_level);        
-
-        //Ok(items.pop().unwrap())
-        //Ok(GetState)
-    }
 }
