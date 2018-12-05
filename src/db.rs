@@ -61,57 +61,64 @@ impl Handler<GpioLevel> for DbExecutor {
     type Result = Result<models::Gpio, Error>;
 
     fn handle(&mut self, msg: GpioLevel, _: &mut Self::Context) -> Self::Result {
+        let required_gpio_mode = "output";
         use schema::gpio_state::dsl::*;
         let connection = &self.0.get()
             .map_err(|_| error::ErrorInternalServerError("Error obtaining database connection"))?;
 
-        // 1. Load Gpio from database
-        let mut gpio_vec_before = gpio_state
+        // 1. Load Vec<Gpio> from database
+        let gpio_before = gpio_state
             .filter(gpio_id.eq(msg.gpio_id))
             .load::<models::Gpio>(connection)
-            .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
-
-        // 2. Check if the GPIO is in use
-        let bool_in_use = gpio_vec_before.pop()
+            .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?
+            .pop()
             .ok_or({
                 error::ErrorInternalServerError(
                     format!("No result for GPIO #{} in database", msg.gpio_id)
-                )})?
-            .in_use == 1;
+                )})?;
 
-        // TODO: 2.5 check if gpio_mode = OUTPUT
-
-        // 3. Check if 'msg.gpio_level' is allowed
-        let desired_level = msg.gpio_level.to_lowercase();
-        let state_map = get_allowed_states(connection, "level")
-            .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
-        
-        let allowed = state_map.get::<str>(&desired_level)
-            .ok_or(error::ErrorInternalServerError("Error loading from database"))?;
-        if ! allowed {
-                info!("Level '{}' is not allowed", desired_level);
-                Err(error::ErrorInternalServerError("State not allowed"))?
-        }
-
-        // 4. Change the level
-        if bool_in_use {
-            let target = gpio_state.filter(gpio_id.eq(msg.gpio_id));
-
-            let _result = diesel::update(target)
-                .set((
-                    last_change.eq(Local::now().naive_local().to_string()),
-                    gpio_level.eq(msg.gpio_level)
-                ))
-            .execute(connection);
-        }
-        else {
+        // 2. Check if the GPIO is in use
+        let bool_in_use = gpio_before.in_use == 1;
+        if ! bool_in_use {
             info!("GPIO #{} not in use.", msg.gpio_id);
             return Err(error::ErrorInternalServerError(
                 format!("GPIO #{} not in use.", msg.gpio_id)
             ))
         }
 
-        // 5. Return Gpio state after update
+        // 3. check if gpio_mode = 'output'
+        if  gpio_before.gpio_mode != required_gpio_mode {
+            info!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_before.gpio_mode);
+            return Err(error::ErrorInternalServerError(
+                format!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_before.gpio_mode)
+            ))
+        }
+
+        // 4. Check if 'msg.gpio_level' is allowed
+        let desired_level = msg.gpio_level.to_lowercase();
+        let state_map = get_allowed_states(connection, "level")
+            .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
+        
+        let allowed = state_map.get::<str>(&desired_level)
+            .ok_or(error::ErrorInternalServerError(
+                format!("Could not level '{}' in table 'allowed_states'", desired_level)
+            ))?;
+        if ! allowed {
+                info!("Level '{}' is not allowed", desired_level);
+                Err(error::ErrorInternalServerError("State not allowed"))?
+        }
+
+        // 5. Change the level
+        let target = gpio_state.filter(gpio_id.eq(msg.gpio_id));
+
+        let _result = diesel::update(target)
+            .set((
+                last_change.eq(Local::now().naive_local().to_string()),
+                gpio_level.eq(msg.gpio_level.to_lowercase())
+            ))
+            .execute(connection);
+
+        // 6. Return Gpio state after update
         let mut gpio_vec_after = gpio_state
             .filter(gpio_id.eq(msg.gpio_id))
             .load::<models::Gpio>(connection)

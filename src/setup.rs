@@ -12,11 +12,11 @@ pub fn read_env_delimiter() -> String {
     let env_delimiter = env::var("DELIMITER");
     let delimiter = match env_delimiter {
         Ok(val) => {
-            info!("Using '{}' as delimiter in .env", val);
+            debug!("Using '{}' as delimiter in .env", val);
             val
             },
         Err(_err) => {
-            info!("No delimiter set - defaulting to '{}'", default_delimiter);
+            debug!("No delimiter set - defaulting to '{}'", default_delimiter);
             default_delimiter
         }
     };
@@ -33,7 +33,7 @@ pub fn parse_string_to_vec(delimiter: &str, parse_str: &str) -> Result<Vec<i32>,
         
     match vec {
         Ok(parsed) => {
-            info!("Parsed '{}' to {:?}", parse_str, parsed);
+            debug!("Parsed '{}' to {:?}", parse_str, parsed);
             Ok(parsed)
         }
         Err(err) => {
@@ -50,7 +50,7 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
     
     match env_var {
         Ok(read_str) => {
-            info!("Read {}, got: {}", var_to_read, read_str);
+            debug!("Read {}, got: {}", var_to_read, read_str);
             Ok(read_str)
         }
         Err(err) => {
