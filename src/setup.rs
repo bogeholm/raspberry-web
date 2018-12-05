@@ -91,46 +91,46 @@ pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &Sqli
                 set_gpio_in_use(*idx, 1, conn); // Logging happens in db_utilities
             }     
         },
-        _ => info!("GPIOS_IN_USE not set")
+        _ => debug!("GPIOS_IN_USE not set")
     }
 
     // Should be set to OUTPUT
     match map.get("GPIOS_MODE_OUTPUT") {
         Some(vec) => {
             for idx in vec.iter(){
-                set_gpio_mode(*idx, "OUTPUT", conn); // Logging happens in db_utilities
+                set_gpio_mode(*idx, "output", conn); // Logging happens in db_utilities
             }     
         }
-        _ => info!("GPIOS_MODE_OUTPUT not set")
+        _ => debug!("GPIOS_MODE_OUTPUT not set")
     }
 
     // Should be set to INPUT
     match map.get("GPIOS_MODE_INPUT") {
         Some(vec) => {
             for idx in vec.iter(){
-                set_gpio_mode(*idx, "INPUT", conn); // Logging happens in db_utilities
+                set_gpio_mode(*idx, "input", conn); // Logging happens in db_utilities
             }     
         }
-        _ => info!("GPIOS_MODE_INPUT not set")
+        _ => debug!("GPIOS_MODE_INPUT not set")
     }
 
     // Should be set to LOW
     match map.get("GPIOS_LEVEL_LOW") {
         Some(vec) => {
             for idx in vec.iter(){
-                set_gpio_level(*idx, "LOW", conn); // Logging happens in db_utilities
+                set_gpio_level(*idx, "low", conn); // Logging happens in db_utilities
             }     
         }
-        _ => info!("GPIOS_LEVEL_LOW not set")
+        _ => debug!("GPIOS_LEVEL_LOW not set")
     }
 
     // Should be set to LOW
     match map.get("GPIOS_LEVEL_HIGH") {
         Some(vec) => {
             for idx in vec.iter(){
-                set_gpio_level(*idx, "HIGH", conn); // Logging happens in db_utilities
+                set_gpio_level(*idx, "high", conn); // Logging happens in db_utilities
             }     
         }
-        _ => info!("GPIOS_LEVEL_HIGH not set")
+        _ => debug!("GPIOS_LEVEL_HIGH not set")
     }
 }

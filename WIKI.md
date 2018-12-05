@@ -19,6 +19,7 @@ Will only be set specifically for the GPIO pins used by the program
 11. Return `Result<(), Error>` from more functions
 12. Add `rppal` functionality
 13. Add Postman collection for documenation
+14. <s>Unify caps in database</s>
 
 # To Do - Code Quality
 1. Fix `schema.rs` -> `Nullable<Text>`
