@@ -1,22 +1,5 @@
-use super::schema::gpio_state;
-use chrono::NaiveDateTime;
-
-// https://github.com/actix/examples/tree/master/diesel
-use actix::prelude::*;
-use actix_web::*;
-use diesel;
-use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
-
-use models;
-use schema;
-
-// db executor
-pub struct DbExecutor(pub Pool<ConnectionManager<SqliteConnection>>);
-
-impl Actor for DbExecutor {
-    type Context = SyncContext<Self>;
-}
+use super::schema::{gpio_state, allowed_states};
+use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "gpio_state"]
@@ -29,13 +12,24 @@ pub struct Gpio {
 }
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "gpio_state"]
-pub struct GetState {
-    pub gpio_id: i32,
+#[table_name = "allowed_states"]
+pub struct AllowedStates {
+    pub state_id: i32,
+    pub state_type: String,         // MODE or LEVEL
+    // i32 for true / false below
+    pub input: i32,
+    pub output: i32,
+    pub high: i32,
+    pub low: i32
 }
 
-impl Gpio {
-    pub fn set_in_use(self) -> bool {
-        self.in_use == 1
+impl AllowedStates {
+    pub fn to_hashmap(&self) -> HashMap<&'static str, bool> {
+        let mut hashed: HashMap<&'static str, bool> = HashMap::new();
+        hashed.insert("input", self.input == 1);
+        hashed.insert("outut", self.output == 1);
+        hashed.insert("high", self.high == 1);
+        hashed.insert("low", self.low == 1);
+        hashed
     }
 }

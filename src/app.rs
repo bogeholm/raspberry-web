@@ -1,35 +1,57 @@
-use actix::prelude::*;
-use actix_web::*;
-use actix_web::{middleware::Logger, App, http::Method, HttpRequest, HttpResponse, State, Responder};
-use models::DbExecutor;
 
+use actix::prelude::*;
+use actix_web::{AsyncResponder, FutureResponse, HttpResponse, Path,State,};
+use actix_web::{http, middleware, App,};
+
+use futures::Future;
+
+use db::{GpioId, GpioLevel, DbExecutor};
+
+/// State with DbExecutor address
 pub struct AppState {
     pub db: Addr<DbExecutor>,
 }
-//(signup_invitation, state): (Json<CreateInvitation>, State<AppState>)
-//fn index2((_req, _state): (&HttpRequest, State<AppState>)) -> HttpResponse {//HttpResponse {
-//    let s = "Hello";
-//    HttpResponse::Ok().content_type("text/html").body(s)
-//}
 
-// /// simple handle
-// fn index(
-//     //(state, req): (State<AppState>, &HttpRequest),
-//     state: &HttpRequest<<AppState>>
-//     ) -> HttpResponse {
-//     println!("{:?}", req);
+/// Get name associated to id
+pub fn gpio_status(
+    (req, state): (Path<i32>, State<AppState>),
+) -> FutureResponse<HttpResponse> {
+    state
+        .db
+        .send(GpioId {
+            gpio_id: req.into_inner(),
+        })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(user) => Ok(HttpResponse::Ok().json(user)),
+            Err(_) => Ok(HttpResponse::InternalServerError().into()),
+        })
+        .responder()
+}
 
-//     HttpResponse::Ok().content_type("text/html").body("Hello")
-// }
+/// Set GPIO level to HIGH or LOW
+pub fn set_gpio_level(
+    (req, state): (Path<(i32, String)>, State<AppState>), // TODO: Extract multiple elements from path
+) -> FutureResponse<HttpResponse> {
+    state
+        .db
+        .send(GpioLevel {
+            gpio_id: req.0,
+            gpio_level: req.1.clone()
+        })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(response) => Ok(HttpResponse::Ok().json(response)),
+            Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()).into()),
+        })
+        .responder()
+}
 
-
-// /// creates and returns the app after mounting all routes/resources
-// pub fn create_app(db: Addr<DbExecutor>) -> App<AppState> {
-//     App::with_state(AppState { db })
-//         .middleware(Logger::default())
-
-//         // test
-//         .resource("/hello/{id}", |r| {
-//             r.method(Method::GET).with(index);
-//         })
-// }
+/// creates and returns the app after mounting all routes/resources
+pub fn create_app(db: Addr<DbExecutor>) -> App<AppState> {
+    App::with_state(AppState{db})
+        // enable logger
+        .middleware(middleware::Logger::default())
+        .resource("/status/{id}", |r| r.method(http::Method::GET).with(gpio_status))
+        .resource("/set_level/{id}/{level}", |r| r.method(http::Method::GET).with(set_gpio_level))
+}

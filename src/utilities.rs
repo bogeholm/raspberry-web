@@ -1,39 +1,52 @@
 use diesel::prelude::*;
 use schema::gpio_state::dsl::*;
 use chrono::{Local};
+use models;
+use std::collections::HashMap;
 
-pub fn reset_table_gpio_state(conn: &SqliteConnection) {
+pub fn reset_table_gpio_state(conn: &SqliteConnection) -> Result<(), diesel::result::Error> {
     info!("Resetting all fields in table 'gpio_state'...");
+    // TODO: get all id's from table
     let gpio_array: [i32; 28] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
         // GPIO 17 - 20 do not exist
         21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
-    //let res_delete = diesel::delete(gpio_state).execute(conn);
-    //let res_create = diesel::
-    for idx in gpio_array.iter(){
+    
+    for idx in gpio_array.iter() {
         let target = gpio_state.filter(gpio_id.eq(idx));
 
-        let result = diesel::update(target)
+        let n_updated = diesel::update(target)
             .set((
-                in_use.eq(0), 
+                in_use.eq(0),
                 last_change.eq(Local::now().naive_local().to_string()),
                 gpio_mode.eq(""),
                 gpio_level.eq("")
                 ))
-            .execute(conn);
+            .execute(conn)?; // DatabaseError
             
-        match result {
-            Ok(val) => {
-                if val == 1 {
-                    debug!("Reset values for GPIO #{}", idx);
-                }
-                else {
-                    warn!{"SQL for resetting table 'gpio_state' for GPIO #{} affects {} rows", idx, val};
-                }
-            },
-            Err(err) => error!("Failed to reset table 'gpio_state' for GPIO #{}: {:?}", idx, err),
+        if n_updated == 1 {
+            debug!("Reset values for GPIO #{}", idx);
+        }
+        else {
+            error!{"SQL for resetting table 'gpio_state' for GPIO #{} affects {} rows", idx, n_updated};
+            Err(diesel::result::Error::NotFound)?
         }
     }
+    Ok(())
+}
+
+pub fn get_allowed_states(connection: &SqliteConnection, desired_type: &str) 
+    -> Result<HashMap<&'static str, bool>, diesel::result::Error> {
+    use schema::allowed_states::dsl::*;
+    
+    let res = allowed_states
+        .filter(state_type.eq(desired_type.to_lowercase()))
+        .load::<models::AllowedStates>(connection)? // DatabaseError
+        .pop()
+        .ok_or({diesel::result::Error::NotFound})? //Empty vector
+        .to_hashmap();
+    
+    Ok(res)
 }
 
 // Consider returning result

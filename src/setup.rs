@@ -1,8 +1,6 @@
 use diesel::prelude::*;
 use std::env;
-use schema::gpio_state::dsl::*;
 use utilities::{set_gpio_in_use, set_gpio_mode, set_gpio_level};
-use std::io::Error as ioError;
 use std::collections::HashMap;
 use std::num::ParseIntError;
 use std::env::VarError;
@@ -17,7 +15,7 @@ pub fn read_env_delimiter() -> String {
             info!("Using '{}' as delimiter in .env", val);
             val
             },
-        Err(err) => {
+        Err(_err) => {
             info!("No delimiter set - defaulting to '{}'", default_delimiter);
             default_delimiter
         }
