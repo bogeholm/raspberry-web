@@ -13,9 +13,9 @@ table! {
     gpio_state (gpio_id) {
         gpio_id -> Integer,
         in_use -> Integer,
-        gpio_mode -> Nullable<Text>,
-        gpio_level -> Nullable<Text>,
-        last_change -> Nullable<Timestamp>,
+        gpio_mode -> Text, // TODO: Nullable<Text>
+        gpio_level -> Text, // TODO: Nullable<Text>
+        last_change -> Text, // TODO: Make timestamp, TODO: Nullable<Text>,
     }
 }
 
