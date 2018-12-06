@@ -19,12 +19,13 @@ Will only be set specifically for the GPIO pins used by the program
 11. Return `Result<(), Error>` from more functions
 12. Add `rppal` functionality
 13. Add Postman collection for documenation
-14. Get list of gpio id's from DB
+14. <s>Get list of gpio id's from DB</s>
 15. <s>Unify caps in database</s>
 
 # To Do - Code Quality
-1. Fix `schema.rs` -> `Nullable<Text>`
-2. Better `actix` errors
-3. Custom error types
+1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>
+2. Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
+3. Better `actix` error types
 4. Unit tests
 5. Integration tests
+6. Custom error types

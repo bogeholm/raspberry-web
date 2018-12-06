@@ -22,6 +22,7 @@ pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), diese
             .set((
                 in_use.eq(0),
                 last_change.eq(Local::now().naive_local().to_string()),
+                // These two next ones can be discussed
                 gpio_mode.eq(""),
                 gpio_level.eq("")
                 ))

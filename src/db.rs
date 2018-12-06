@@ -38,7 +38,6 @@ impl Handler<GpioId> for DbExecutor {
 
     fn handle(&mut self, msg: GpioId, _: &mut Self::Context) -> Self::Result {
         use schema::gpio_state::dsl::*;
-        info!("Received {}", msg.gpio_id);
 
         let connection = &self.0.get()
             .map_err(|_| error::ErrorInternalServerError("Error obtaining database connection"))?;
@@ -50,7 +49,6 @@ impl Handler<GpioId> for DbExecutor {
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
 
         gpio_vec.pop().ok_or({
-            info!("No result for GPIO #{} in database", msg.gpio_id);
             error::ErrorInternalServerError(
                 format!("No result for GPIO #{} in database", msg.gpio_id)
         )})
@@ -87,11 +85,14 @@ impl Handler<GpioLevel> for DbExecutor {
         }
 
         // 3. check if gpio_mode = 'output'
-        if  gpio_before.gpio_mode != required_gpio_mode {
-            let message = format!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_before.gpio_mode);
+        let gpio_mode_before = gpio_before.gpio_mode.unwrap_or("".to_string());
+        if  gpio_mode_before != required_gpio_mode {
+            let message = format!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_mode_before);
             info!("{}", message);
             return Err(error::ErrorInternalServerError(message))
         }
+
+        // TODO: Functionality duplication in 3. and 4.
 
         // 4. Check if 'msg.gpio_level' is allowed
         let desired_level = msg.gpio_level.to_lowercase();
