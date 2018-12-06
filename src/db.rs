@@ -88,10 +88,9 @@ impl Handler<GpioLevel> for DbExecutor {
 
         // 3. check if gpio_mode = 'output'
         if  gpio_before.gpio_mode != required_gpio_mode {
-            info!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_before.gpio_mode);
-            return Err(error::ErrorInternalServerError(
-                format!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_before.gpio_mode)
-            ))
+            let message = format!("Level '{}' is not allowed for mode '{}'", msg.gpio_level, gpio_before.gpio_mode);
+            info!("{}", message);
+            return Err(error::ErrorInternalServerError(message))
         }
 
         // 4. Check if 'msg.gpio_level' is allowed
