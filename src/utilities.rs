@@ -4,15 +4,18 @@ use chrono::{Local};
 use models;
 use std::collections::HashMap;
 
-pub fn reset_table_gpio_state(conn: &SqliteConnection) -> Result<(), diesel::result::Error> {
+pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), diesel::result::Error> {
     info!("Resetting all fields in table 'gpio_state'...");
-    // TODO: get all id's from table
-    let gpio_array: [i32; 28] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
-        // GPIO 17 - 20 do not exist
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-
     
-    for idx in gpio_array.iter() {
+    // Get all GPIO id's from table gpio_state
+    use schema::gpio_state::dsl::*;
+    let gpio_ids_db: Vec<i32> = gpio_state
+        .load::<models::Gpio>(connection)?
+        .into_iter()
+        .map(|element| element.gpio_id)
+        .collect();
+    
+    for idx in gpio_ids_db.iter() {
         let target = gpio_state.filter(gpio_id.eq(idx));
 
         let n_updated = diesel::update(target)
@@ -22,7 +25,7 @@ pub fn reset_table_gpio_state(conn: &SqliteConnection) -> Result<(), diesel::res
                 gpio_mode.eq(""),
                 gpio_level.eq("")
                 ))
-            .execute(conn)?; // DatabaseError
+            .execute(connection)?; // DatabaseError
             
         if n_updated == 1 {
             debug!("Reset values for GPIO #{}", idx);
