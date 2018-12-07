@@ -3,9 +3,7 @@ extern crate actix_web;
 extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
-
-//extern crate raspberry_web;
-//use raspberry_web::db;
+extern crate raspberry_web;
 
 //use actix::prelude::*;
 //use actix_web::test::TestServer;
@@ -41,5 +39,3 @@ fn test_db () {
     //let _server = server::new(move || app::create_app(addr.clone()));
 
 }
-
-

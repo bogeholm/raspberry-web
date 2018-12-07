@@ -30,7 +30,7 @@ use std::env;
 
 
 
-fn main() {
+pub fn setup_and_run() {
     // Read environment variables from .env - must come before env_logger::init()
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL not found");
