@@ -21,6 +21,7 @@ Will only be set specifically for the GPIO pins used by the program
 13. Add Postman collection for documenation
 14. <s>Get list of gpio id's from DB</s>
 15. <s>Unify caps in database</s>
+16. Split functionality into `main.rs` and `lib.rs`
 
 # To Do - Code Quality
 1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>

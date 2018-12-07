@@ -66,7 +66,7 @@ fn main() {
 
 
     let ip_port = format!("{}:{}", hostname, port);
-    server::new(move || app::create_app(addr.clone()))
+    let _server = server::new(move || app::create_app(addr.clone()))
         .bind(&ip_port)
         .expect(&format!("Can not bind to {}", &ip_port))
         .start();
