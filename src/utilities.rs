@@ -123,5 +123,6 @@ pub fn set_gpio_level(id: i32, level: &str, conn: &SqliteConnection) {
 }
 
 
+
 // TODO: Testing
 // https://github.com/diesel-rs/diesel/blob/master/diesel_tests/tests/select.rs

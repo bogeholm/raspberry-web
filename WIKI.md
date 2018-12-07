@@ -16,7 +16,7 @@ Will only be set specifically for the GPIO pins used by the program
 8. <s>Add ports to `.env`</s>
 9. <s>Add actix routes</s>
 10. <s>Check if Gpio is set to Outout before changing</s>
-11. Return `Result<(), Error>` from more functions
+11. <s>Return `Result<(), Error>` from more functions</s>
 12. Add `rppal` functionality
 13. Add Postman collection for documenation
 14. <s>Get list of gpio id's from DB</s>
@@ -26,6 +26,7 @@ Will only be set specifically for the GPIO pins used by the program
 1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>
 2. Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
 3. Better `actix` error types
-4. Unit tests
-5. Integration tests
-6. Custom error types
+4. Refactor error messages
+5. Unit tests
+6. Integration tests
+7. Custom error types
