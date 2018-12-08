@@ -14,8 +14,8 @@ extern crate log;
 #[macro_use] extern crate serde_derive;
 extern crate r2d2;
 
-mod app;
-mod db;
+pub mod app;
+pub mod db;
 mod schema;
 mod models;
 mod setup;

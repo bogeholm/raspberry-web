@@ -1,7 +1,6 @@
 
 use actix::prelude::*;
-use actix_web::{AsyncResponder, FutureResponse, HttpResponse, Path,State,};
-use actix_web::{http, middleware, App,};
+use actix_web::{AsyncResponder, FutureResponse, HttpResponse, Path, State, http, middleware, App};
 
 use futures::Future;
 
