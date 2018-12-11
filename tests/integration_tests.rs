@@ -16,12 +16,15 @@ use dotenv::dotenv;
 use diesel::prelude::*;
 use diesel::{r2d2::ConnectionManager, r2d2::Pool, SqliteConnection};
 use diesel_migrations::RunMigrationsError;
+use std::sync::{Once, ONCE_INIT};
 
 use raspberry_web::db::{DbExecutor};
 use raspberry_web::schema;
 use raspberry_web::app::{AppState, gpio_status, set_gpio_level};//, set_gpio_level};
 
 embed_migrations!("migrations");
+
+static INIT: Once = ONCE_INIT;
 
 // -Create in memory database-
 // -Run migrations-  
@@ -30,6 +33,13 @@ embed_migrations!("migrations");
 // -Start routes-
 // TEST
 // ... Humongous refactor
+
+fn init_logging_once() {
+    INIT.call_once( || {
+        dotenv().ok();
+        env_logger::init();
+    });
+}
 
 /// Create r2d2 pool, run diesel migrations
 fn get_pool_after_migrations() -> Result<Pool<ConnectionManager<SqliteConnection>>, RunMigrationsError> {
@@ -61,8 +71,7 @@ fn setup_db_for_tests(connection: &SqliteConnection) -> Result<(), diesel::resul
 
 /// Build test server with state, setup db for tests and return testserver
 fn get_testserver_with_state() -> TestServer {
-    //dotenv().ok();
-    //env_logger::init();
+    init_logging_once();
     // https://github.com/actix/actix-website/blob/master/content/docs/testing.md
     let test_server = TestServer::build_with_state( || {
         // we can start diesel actors
