@@ -16,7 +16,7 @@ extern crate r2d2;
 
 pub mod app;
 pub mod db;
-mod schema;
+pub mod schema;
 mod models;
 mod setup;
 mod utilities;

@@ -20,5 +20,5 @@ image: "rust:latest"
 # Use cargo to test the project
 test:cargo:
   script:
-  - rustc --version && cargo --version      # Print version info for debugging
-  - cargo test --all --verbose
+  - rustc --version && cargo --version              # Print version info for debugging
+  - cargo test --all --verbose -- --test-threads=1  # single threaded since we will use Gpio::new() in integration tests
