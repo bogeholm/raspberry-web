@@ -34,6 +34,7 @@ static INIT: Once = ONCE_INIT;
 // TEST
 // ... Humongous refactor
 
+/// Initialize logging only once
 fn init_logging_once() {
     INIT.call_once( || {
         dotenv().ok();
@@ -55,17 +56,27 @@ fn setup_db_for_tests(connection: &SqliteConnection) -> Result<(), diesel::resul
     // http://diesel.rs/guides/all-about-inserts/
     use schema::gpio_state::dsl::*;
 
-    // gpio #1: check status, return success
+    // gpio #1: can be polled and updated
     diesel::update(gpio_state).set((
         in_use.eq(1), gpio_mode.eq("output"), gpio_level.eq("low")
         )).filter(gpio_id.eq(1))
         .execute(connection)?;
 
+    // gpio #2: not in use
+    diesel::update(gpio_state).set(in_use.eq(0)).filter(gpio_id.eq(2))
+        .execute(connection)?;
+
+    // gpio #3: in use, mode is input
+    diesel::update(gpio_state).set((
+        in_use.eq(1), gpio_mode.eq("input")
+        )).filter(gpio_id.eq(3))
+        .execute(connection)?;
+
+
     Ok(())
 }
 
-
-// Did not work, for a reason
+// Did not work, for a reason:
 // let test_server = TestServer::with_factory(move || app::create_app(addr.clone()));
 // TODO: Build testserver with state AND factory
 
@@ -118,51 +129,80 @@ fn check_status_succes () {
 #[test]
 fn check_status_gpio_nonexistant_failure() {
     // given
-    let mut _test_server = get_testserver_with_state();
+    let mut test_server = get_testserver_with_state();
+    
     // when 
-
+    let request = test_server.client(http::Method::GET, "/status/18").finish().unwrap();
+    let response = test_server.execute(request.send()).unwrap();
     // then
-    assert_eq!(1, 1)
+    assert_eq!(response.status().is_success(), false)
+    //assert_eq!(1, 1)
 }
 
 #[test]
 fn set_gpio_level_success() {
     // given
-    let mut _test_server = get_testserver_with_state();
+    let mut test_server = get_testserver_with_state();
+    
     // when 
-
+    let request = test_server.client(http::Method::GET, "/set_level/1/high").finish().unwrap();
+    let response = test_server.execute(request.send()).unwrap();
+    
     // then
-    assert_eq!(1, 1)
+    assert!(response.status().is_success())
 }
 
 #[test]
 fn set_gpio_level_gpio_nonexistant_failure() {
     // given
-    let mut _test_server = get_testserver_with_state();
+    let mut test_server = get_testserver_with_state();
+    
     // when 
-
+    let request = test_server.client(http::Method::GET, "/set_level/18/high").finish().unwrap();
+    let response = test_server.execute(request.send()).unwrap();
+    
     // then
-    assert_eq!(1, 1)
+    assert_eq!(response.status().is_success(), false)
 }
 
 
 #[test]
 fn set_gpio_level_gpio_not_in_use_failure() {
     // given
-    let mut _test_server = get_testserver_with_state();
+    let mut test_server = get_testserver_with_state();
+    
     // when 
-
+    let request = test_server.client(http::Method::GET, "/set_level/2/high").finish().unwrap();
+    let response = test_server.execute(request.send()).unwrap();
+    
     // then
-    assert_eq!(1, 1)
+    assert_eq!(response.status().is_success(), false)
 }
 
 
 #[test]
 fn set_gpio_level_gpio_mode_not_output_failure() {
     // given
-    let mut _test_server = get_testserver_with_state();
+    let mut test_server = get_testserver_with_state();
+    
     // when 
-
+    let request = test_server.client(http::Method::GET, "/set_level/3/high").finish().unwrap();
+    let response = test_server.execute(request.send()).unwrap();
+    
     // then
-    assert_eq!(1, 1)
+    assert_eq!(response.status().is_success(), false)
+}
+
+#[test]
+fn set_gpio_level_unknown_level_failure() {
+    // given
+    let mut test_server = get_testserver_with_state();
+    
+    // when 
+    let request = test_server.client(http::Method::GET, "/set_level/1/something_random")
+        .finish().unwrap();
+    let response = test_server.execute(request.send()).unwrap();
+    
+    // then
+    assert_eq!(response.status().is_success(), false)
 }
