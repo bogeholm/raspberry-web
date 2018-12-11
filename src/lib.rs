@@ -28,8 +28,6 @@ use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
 
-
-
 pub fn setup_and_run() {
     // Read environment variables from .env - must come before env_logger::init()
     dotenv().ok();
@@ -63,7 +61,6 @@ pub fn setup_and_run() {
     // https://github.com/actix/actix-website/blob/master/content/docs/databases.md
     // https://docs.rs/actix-web/0.6.3/actix_web/struct.State.html
     let addr = SyncArbiter::start(3, move || DbExecutor(pool.clone()));
-
 
     let ip_port = format!("{}:{}", hostname, port);
     let _server = server::new(move || app::create_app(addr.clone()))

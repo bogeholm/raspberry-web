@@ -26,14 +26,6 @@ embed_migrations!("migrations");
 
 static INIT: Once = ONCE_INIT;
 
-// -Create in memory database-
-// -Run migrations-  
-// -Change crate type to lib-
-// -Build App state-
-// -Start routes-
-// TEST
-// ... Humongous refactor
-
 /// Initialize logging only once
 fn init_logging_once() {
     INIT.call_once( || {
@@ -123,7 +115,6 @@ fn check_status_succes () {
     info!("{:?}", response);
     // then
     assert!(response.status().is_success())
-
 }
 
 #[test]
