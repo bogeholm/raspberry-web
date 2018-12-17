@@ -3,7 +3,7 @@ use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpRespo
 
 use futures::Future;
 
-use db::{DbExecutor, GpioId, GpioLevel};
+use crate::db::{DbExecutor, GpioId, GpioLevel};
 
 /// State with DbExecutor address
 pub struct AppState {

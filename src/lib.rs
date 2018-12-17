@@ -24,7 +24,7 @@ mod utilities;
 
 use actix::prelude::*;
 use actix_web::server;
-use db::DbExecutor;
+use crate::db::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;

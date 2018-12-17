@@ -1,14 +1,14 @@
 use chrono::Local;
 use diesel::prelude::*;
-use models;
-use schema::gpio_state::dsl::*;
+use crate::models;
+use crate::schema::gpio_state::dsl::*;
 use std::collections::HashMap;
 
 pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), diesel::result::Error> {
     info!("Resetting all fields in table 'gpio_state'...");
 
     // Get all GPIO id's from table gpio_state
-    use schema::gpio_state::dsl::*;
+    use crate::schema::gpio_state::dsl::*;
     let gpio_ids_db: Vec<i32> = gpio_state
         .load::<models::Gpio>(connection)?
         .into_iter()
@@ -42,7 +42,7 @@ pub fn get_allowed_states(
     connection: &SqliteConnection,
     desired_type: &str,
 ) -> Result<HashMap<&'static str, bool>, diesel::result::Error> {
-    use schema::allowed_states::dsl::*;
+    use crate::schema::allowed_states::dsl::*;
 
     let res = allowed_states
         .filter(state_type.eq(desired_type.to_lowercase()))

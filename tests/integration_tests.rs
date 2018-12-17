@@ -49,7 +49,7 @@ fn get_pool_after_migrations(
 /// Setup test database for integration tests
 fn setup_db_for_tests(connection: &SqliteConnection) -> Result<(), diesel::result::Error> {
     // http://diesel.rs/guides/all-about-inserts/
-    use schema::gpio_state::dsl::*;
+    use crate::schema::gpio_state::dsl::*;
 
     // gpio #1: can be polled and updated
     diesel::update(gpio_state)

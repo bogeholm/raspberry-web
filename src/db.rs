@@ -4,8 +4,8 @@ use actix_web::{error, Error};
 use chrono::Local;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
-use models;
-use utilities::get_allowed_states;
+use crate::models;
+use crate::utilities::get_allowed_states;
 
 //use utilities::get_allowed_states;
 
@@ -38,7 +38,7 @@ impl Handler<GpioId> for DbExecutor {
     type Result = Result<models::Gpio, Error>;
 
     fn handle(&mut self, msg: GpioId, _: &mut Self::Context) -> Self::Result {
-        use schema::gpio_state::dsl::*;
+        use crate::schema::gpio_state::dsl::*;
 
         let connection = &self
             .0
@@ -64,7 +64,7 @@ impl Handler<GpioLevel> for DbExecutor {
 
     fn handle(&mut self, msg: GpioLevel, _: &mut Self::Context) -> Self::Result {
         let required_gpio_mode = "output";
-        use schema::gpio_state::dsl::*;
+        use crate::schema::gpio_state::dsl::*;
         let connection = &self
             .0
             .get()
