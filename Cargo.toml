@@ -2,6 +2,7 @@
 name = "raspberry_web"
 version = "0.1.2"
 authors = ["bogeholm <troelsmikkelsen@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 actix = "0.7.7"
