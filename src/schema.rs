@@ -19,7 +19,4 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(
-    allowed_states,
-    gpio_state,
-);
+allow_tables_to_appear_in_same_query!(allowed_states, gpio_state,);

@@ -4,26 +4,27 @@
 extern crate actix;
 extern crate actix_web;
 extern crate chrono;
-#[macro_use] 
+#[macro_use]
 extern crate diesel;
 extern crate dotenv;
-extern crate env_logger; 
+extern crate env_logger;
 extern crate futures;
 #[macro_use]
 extern crate log;
-#[macro_use] extern crate serde_derive;
+#[macro_use]
+extern crate serde_derive;
 extern crate r2d2;
 
 pub mod app;
 pub mod db;
-pub mod schema;
 mod models;
+pub mod schema;
 mod setup;
 mod utilities;
 
 use actix::prelude::*;
 use actix_web::server;
-use db::{DbExecutor};
+use db::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
@@ -40,7 +41,9 @@ pub fn setup_and_run() {
 
     // Create database connection pool
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
-    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create r2d2 pool.");
+    let pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create r2d2 pool.");
     let connection = pool.get().expect("Failed to acquire connection");
 
     // Reset database
@@ -49,8 +52,8 @@ pub fn setup_and_run() {
     // Read these variables from .env
     let env_keys = vec![
         "GPIOS_IN_USE",
-        "GPIOS_MODE_OUTPUT",//"GPIOS_MODE_INPUT",
-        "GPIOS_LEVEL_LOW",//"GPIOS_LEVEL_HIGH"
+        "GPIOS_MODE_OUTPUT", //"GPIOS_MODE_INPUT",
+        "GPIOS_LEVEL_LOW",   //"GPIOS_LEVEL_HIGH"
     ];
 
     // Parse env_keys, commit to database
