@@ -111,8 +111,8 @@ fn check_status_succes () {
     // when
     let request = test_server.client(http::Method::GET, "/status/1").finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
-
     info!("{:?}", response);
+
     // then
     assert!(response.status().is_success())
 }
@@ -125,6 +125,8 @@ fn check_status_gpio_nonexistant_failure() {
     // when 
     let request = test_server.client(http::Method::GET, "/status/18").finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
+    info!("{:?}", response);
+
     // then
     assert_eq!(response.status().is_success(), false)
     //assert_eq!(1, 1)
@@ -138,6 +140,7 @@ fn set_gpio_level_success() {
     // when 
     let request = test_server.client(http::Method::GET, "/set_level/1/high").finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
+    info!("{:?}", response);
     
     // then
     assert!(response.status().is_success())
@@ -151,6 +154,7 @@ fn set_gpio_level_gpio_nonexistant_failure() {
     // when 
     let request = test_server.client(http::Method::GET, "/set_level/18/high").finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
+    info!("{:?}", response);
     
     // then
     assert_eq!(response.status().is_success(), false)
@@ -165,6 +169,7 @@ fn set_gpio_level_gpio_not_in_use_failure() {
     // when 
     let request = test_server.client(http::Method::GET, "/set_level/2/high").finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
+    info!("{:?}", response);
     
     // then
     assert_eq!(response.status().is_success(), false)
@@ -179,6 +184,7 @@ fn set_gpio_level_gpio_mode_not_output_failure() {
     // when 
     let request = test_server.client(http::Method::GET, "/set_level/3/high").finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
+    info!("{:?}", response);
     
     // then
     assert_eq!(response.status().is_success(), false)
@@ -193,6 +199,7 @@ fn set_gpio_level_unknown_level_failure() {
     let request = test_server.client(http::Method::GET, "/set_level/1/something_random")
         .finish().unwrap();
     let response = test_server.execute(request.send()).unwrap();
+    info!("{:?}", response);
     
     // then
     assert_eq!(response.status().is_success(), false)
