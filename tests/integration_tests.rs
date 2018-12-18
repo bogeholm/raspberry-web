@@ -4,7 +4,6 @@ extern crate diesel_migrations;
 extern crate log;
 extern crate raspberry_web;
 
-//use actix::prelude::*;
 use actix::{SyncArbiter};
 use actix_web::{http};
 use actix_web::test::TestServer;
