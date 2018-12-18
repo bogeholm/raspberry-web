@@ -10,6 +10,12 @@ pub struct AppState {
     pub db: Addr<DbExecutor>,
 }
 
+/// Set up AppState. Will return different content on ARM and non-ARM
+pub fn create_app_state(db: Addr<DbExecutor>) -> AppState {
+    AppState {db}
+}
+
+
 /// Get name associated to id
 pub fn gpio_status((req, state): (Path<i32>, State<AppState>)) -> FutureResponse<HttpResponse> {
     state
@@ -46,8 +52,8 @@ pub fn set_gpio_level(
 }
 
 /// creates and returns the app after mounting all routes/resources
-pub fn create_app(db: Addr<DbExecutor>) -> App<AppState> {
-    App::with_state(AppState { db })
+pub fn create_app(addr: Addr<DbExecutor>) -> App<AppState> {
+    App::with_state(create_app_state(addr))
         // enable logger
         .middleware(middleware::Logger::default())
         .resource("/status/{id}", |r| {

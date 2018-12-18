@@ -18,7 +18,7 @@ use diesel_migrations::RunMigrationsError;
 use dotenv::dotenv;
 use std::sync::{Once, ONCE_INIT};
 
-use raspberry_web::app::{gpio_status, set_gpio_level, AppState};
+use raspberry_web::app::{create_app_state, gpio_status, set_gpio_level};
 use raspberry_web::db::DbExecutor;
 use raspberry_web::schema; //, set_gpio_level};
 
@@ -91,7 +91,7 @@ fn get_testserver_with_state() -> TestServer {
             })
         });
         // then we can construct custom state, or it could be `()`
-        AppState { db: addr }
+        create_app_state(addr)
     })
     // register server handlers and start test server
     .start(|app| {

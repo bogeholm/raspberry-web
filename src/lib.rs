@@ -15,9 +15,13 @@ extern crate log;
 extern crate serde_derive;
 extern crate r2d2;
 
+#[cfg(target_arch = "armv7")]
+extern crate rppal;
+
 pub mod app;
 pub mod db;
 mod models;
+mod rpi;
 pub mod schema;
 mod setup;
 mod utilities;
@@ -28,6 +32,8 @@ use crate::db::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
+use std::sync::{Arc, Mutex};
+
 
 pub fn setup_and_run() {
     // Read environment variables from .env - must come before env_logger::init()
@@ -38,6 +44,10 @@ pub fn setup_and_run() {
 
     // Initialize logger
     env_logger::init();
+
+    let gpio_mutex = rpi::get_gpio_mutex().expect("Unable to acquire Gpio mutex");
+    inc_mutex(gpio_mutex.gpio_mutex.clone());
+    println!("{:?}", gpio_mutex.gpio_mutex);
 
     // Create database connection pool
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
@@ -72,4 +82,9 @@ pub fn setup_and_run() {
         .start();
 
     let _ = sys.run();
+}
+
+pub fn inc_mutex (whatever: Arc<Mutex<i32>>) {
+    let mut whatever = whatever.lock().unwrap();
+    *whatever += 1;
 }
