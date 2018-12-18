@@ -1,4 +1,4 @@
-use diesel::prelude::*;
+use diesel::SqliteConnection;
 use std::collections::HashMap;
 use std::env;
 use std::env::VarError;

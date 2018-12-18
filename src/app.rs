@@ -1,4 +1,4 @@
-use actix::prelude::*;
+use actix::{Addr};
 use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State};
 
 use futures::Future;

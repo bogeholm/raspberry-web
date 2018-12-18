@@ -1,22 +1,12 @@
 // to avoid the warning from diesel macros
 #![allow(proc_macro_derive_resolution_fallback)]
 
-extern crate actix;
-extern crate actix_web;
-extern crate chrono;
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
-extern crate env_logger;
-extern crate futures;
 #[macro_use]
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
-extern crate r2d2;
-
-#[cfg(target_arch = "armv7")]
-extern crate rppal;
 
 pub mod app;
 pub mod db;
@@ -26,7 +16,8 @@ pub mod schema;
 mod setup;
 mod utilities;
 
-use actix::prelude::*;
+//use actix::prelude::*;
+use actix::{SyncArbiter};
 use actix_web::server;
 use crate::db::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};

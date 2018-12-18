@@ -1,5 +1,4 @@
-//! Db executor actor
-use actix::prelude::*;
+use actix::{Actor, Handler, Message, SyncContext};
 use actix_web::{error, Error};
 use chrono::Local;
 use diesel::prelude::*;

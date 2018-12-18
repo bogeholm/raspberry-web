@@ -1002,7 +1002,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "raspberry_web"
-version = "0.1.2"
+version = "0.1.21"
 dependencies = [
  "actix 0.7.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "actix-web 0.7.14 (registry+https://github.com/rust-lang/crates.io-index)",
