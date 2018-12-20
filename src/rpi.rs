@@ -30,7 +30,7 @@ pub fn get_gpio_mutex() -> Result<GpioMutex, io::Error> {
     }
 }
 
-// Returns Arc<Mutex<Gpio>> on ARM, Arc<Mutex<i32>> otherwise
+/// Returns Arc<Mutex<Gpio>> on ARM, Arc<Mutex<i32>> otherwise
 #[cfg(not(target_arch = "armv7"))]
 pub fn get_gpio_mutex() -> Result<GpioMutex, io::Error> {
     let gpio = Arc::new(Mutex::new(0));

@@ -16,7 +16,6 @@ pub mod schema;
 mod setup;
 mod utilities;
 
-//use actix::prelude::*;
 use actix::{SyncArbiter};
 use actix_web::server;
 use crate::db::DbExecutor;
