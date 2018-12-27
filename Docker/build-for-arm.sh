@@ -11,3 +11,4 @@ docker run \
 	--mount type=bind,source="$(echo $HOME)"/raspberry-build/cargo/registry,target=/usr/local/cargo/registry \
 	--shm-size=1g \
 	raspberry-build
+	
