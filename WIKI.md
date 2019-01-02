@@ -5,7 +5,7 @@ Will only be set specifically for the GPIO pins used by the program
 ### Diesel setup
 1. diesel setup --database-url=db/raspberry-web.sqlite
 
-# To Do - Functionality
+# To Do - General Functionality
 1. <s>Read GPIO list from `.env`</s>
 2. <s>Finish all db_setup</s>
 3. <s>`get_gpio_state()`</s>
@@ -17,11 +17,18 @@ Will only be set specifically for the GPIO pins used by the program
 9. <s>Add actix routes</s>
 10. <s>Check if Gpio is set to Outout before changing</s>
 11. <s>Return `Result<(), Error>` from more functions</s>
-12. Add `rppal` functionality
-13. Add Postman collection for documenation
-14. <s>Get list of gpio id's from DB</s>
-15. <s>Unify caps in database</s>
-16. <s>Split functionality into `main.rs` and `lib.rs`</s>
+12. Add Postman collection for documenation
+13. <s>Get list of gpio id's from DB</s>
+14. <s>Unify caps in database</s>
+15. <s>Split functionality into `main.rs` and `lib.rs`</s>
+
+# To Do - Adding `rppal` functionality
+- rpi.rs: <s>`get_gpio_mutex()`</s>
+- rpi.rs: `set_gpio_level_rpi`
+- app.rs: `AppState`
+- app.rs: `create_app_state`
+- lib.rs: `server::new...`
+- utilities.rs: `set_gpio_level`
 
 # To Do - Code Quality
 1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>
@@ -30,4 +37,4 @@ Will only be set specifically for the GPIO pins used by the program
 4. Refactor error messages
 5. Unit tests
 6. <s>Integration tests</s>
-7. Check responses in integratin tests
+7. Check responses in integration tests

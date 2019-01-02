@@ -1,4 +1,5 @@
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use parking_lot::Mutex;
 use std::io;
 #[cfg(target_arch = "armv7")]
 use rppal::{Gpio, Error::InstanceExists};
@@ -35,4 +36,12 @@ pub fn get_gpio_mutex() -> Result<GpioMutex, io::Error> {
 pub fn get_gpio_mutex() -> Result<GpioMutex, io::Error> {
     let gpio = Arc::new(Mutex::new(0));
     Ok(GpioMutex {gpio_mutex: gpio})
+}
+
+/// Returns Arc<Mutex<Gpio>> on ARM, Arc<Mutex<i32>> otherwise
+#[cfg(target_arch = "armv7")]
+pub fn get_gpio_mutex() -> Result<GpioMutex, io::Error> {
+    let gpio = Gpio::new()?;
+
+    Ok(GpioMutex {gpio_mutex: Arc::new(Mutex::new(gpio))})
 }

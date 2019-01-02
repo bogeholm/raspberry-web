@@ -22,8 +22,8 @@ use crate::db::DbExecutor;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
-use std::sync::{Arc, Mutex};
-
+use std::sync::Arc;
+use parking_lot::Mutex;
 
 pub fn setup_and_run() {
     // Read environment variables from .env - must come before env_logger::init()
@@ -66,7 +66,9 @@ pub fn setup_and_run() {
     let addr = SyncArbiter::start(3, move || DbExecutor(pool.clone()));
 
     let ip_port = format!("{}:{}", hostname, port);
-    let _server = server::new(move || app::create_app(addr.clone()))
+    let _server = server::new(move || app::create_app(
+            addr.clone()//, gpio_mutex.gpio_mutex.clone()
+        ))
         .bind(&ip_port)
         .expect(&format!("Can not bind to {}", &ip_port))
         .start();
@@ -75,6 +77,6 @@ pub fn setup_and_run() {
 }
 
 pub fn inc_mutex (whatever: Arc<Mutex<i32>>) {
-    let mut whatever = whatever.lock().unwrap();
+    let mut whatever = whatever.lock();
     *whatever += 1;
 }
