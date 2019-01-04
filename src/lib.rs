@@ -35,9 +35,7 @@ pub fn setup_and_run() {
     // Initialize logger
     env_logger::init();
 
-    let gpio_mutex = rpi::get_gpio_mutex().expect("Unable to acquire Gpio mutex");
-    inc_mutex(gpio_mutex.gpio_mutex.clone());
-    println!("{:?}", gpio_mutex.gpio_mutex);
+    let _gpio_mutex = rpi::get_gpio_mutex().expect("Unable to acquire Gpio mutex");
 
     // Create database connection pool
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
@@ -67,16 +65,11 @@ pub fn setup_and_run() {
 
     let ip_port = format!("{}:{}", hostname, port);
     let _server = server::new(move || app::create_app(
-            addr.clone()//, gpio_mutex.gpio_mutex.clone()
+            addr.clone(), //gpio_mutex.gpio_mutex.clone()
         ))
         .bind(&ip_port)
         .expect(&format!("Can not bind to {}", &ip_port))
         .start();
 
     let _ = sys.run();
-}
-
-pub fn inc_mutex (whatever: Arc<Mutex<i32>>) {
-    let mut whatever = whatever.lock();
-    *whatever += 1;
 }

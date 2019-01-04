@@ -24,7 +24,7 @@ Will only be set specifically for the GPIO pins used by the program
 
 # To Do - Adding `rppal` functionality
 - rpi.rs: <s>`get_gpio_mutex()`</s>
-- rpi.rs: `set_gpio_level_rpi`
+- rpi.rs: <s>`set_gpio_level_rpi`</s>
 - app.rs: `AppState`
 - app.rs: `create_app_state`
 - lib.rs: `server::new...`
