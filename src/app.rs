@@ -1,10 +1,11 @@
 use std::sync::Arc;
 use parking_lot::Mutex;
 use actix::{Addr};
+use actix_web::{error, Error};
 use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State};
 use futures::Future;
-use crate::handlers::{DbExecutor, GpioId, CheckGpioLevel};
-use crate::rpi::set_gpio_level_rpi;
+use crate::handlers::{DbExecutor, GpioId, CheckGpioLevel, SetGpioLevel};
+//use crate::rpi::set_gpio_level_rpi;
 
 #[cfg(target_arch = "armv7")]
 use rppal::gpio::{Gpio, Error::InstanceExists};
@@ -54,6 +55,8 @@ pub fn set_gpio_level(
 ) -> FutureResponse<HttpResponse> {
     let gpio_id = req.0;
     let gpio_level = req.1.clone();
+
+    // https://github.com/actix/examples/blob/master/async_db/src/main.rs
     state
         .db
         .send(CheckGpioLevel {
@@ -61,16 +64,42 @@ pub fn set_gpio_level(
             gpio_level: gpio_level,
         })
         .from_err()
+        .or_else(|err: Error | Ok(HttpResponse::InternalServerError()
+            .body("feilure!!!!!!!")
+            .into())
+            );
+        /*
+        .from_err()
         .and_then(|res| match res {
-            Ok(_) => {
-                //set_gpio_level_rpi(gpio_id, &gpio_level, state.gpio_arc_mutex.clone())
-                Ok(HttpResponse::Ok().body("hello!"))
-            }
+            Ok(_) => {},
+            Err(err) => Ok(HttpResponse::InternalServerError()
+                .body(err.to_string())
+                .into()),
+        });
+    */
+
+    /*
+    state
+        .db
+        .send
+    */
+
+    state
+        .db
+        .send(SetGpioLevel {
+            gpio_id: gpio_id,
+            gpio_level: gpio_level,
+        })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(response) => Ok(HttpResponse::Ok().json(response)),
             Err(err) => Ok(HttpResponse::InternalServerError()
                 .body(err.to_string())
                 .into()),
         })
         .responder()
+
+    // set_gpio_level_rpi(gpio_id, &gpio_level, state.gpio_arc_mutex.clone());
 }
 
 /// creates and returns the app after mounting all routes/resources
