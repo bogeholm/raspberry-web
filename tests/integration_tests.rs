@@ -14,7 +14,7 @@ use dotenv::dotenv;
 use std::sync::{Once, ONCE_INIT};
 
 use raspberry_web::app::{AppState, create_gpio_arc_mutex, gpio_status, set_gpio_level};
-use raspberry_web::db::DbExecutor;
+use raspberry_web::handlers::DbExecutor;
 use raspberry_web::schema; //, set_gpio_level};
 
 embed_migrations!("migrations");

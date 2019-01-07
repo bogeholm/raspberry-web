@@ -3,7 +3,7 @@ use parking_lot::Mutex;
 use actix::{Addr};
 use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State};
 use futures::Future;
-use crate::db::{DbExecutor, GpioId, GpioLevel};
+use crate::handlers::{DbExecutor, GpioId, GpioLevel};
 
 #[cfg(target_arch = "armv7")]
 use rppal::gpio::{Gpio, Error::InstanceExists};

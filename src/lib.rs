@@ -9,7 +9,7 @@ extern crate log;
 extern crate serde_derive;
 
 pub mod app;
-pub mod db;
+pub mod handlers;
 mod models;
 mod rpi;
 pub mod schema;
@@ -18,7 +18,7 @@ mod utilities;
 
 use actix::{SyncArbiter};
 use actix_web::server;
-use crate::db::DbExecutor;
+use crate::handlers::DbExecutor;
 use crate::app::AppState;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;

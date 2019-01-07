@@ -103,8 +103,6 @@ impl Handler<GpioLevel> for DbExecutor {
             return Err(error::ErrorInternalServerError(message));
         }
 
-        // TODO: Functionality duplication in 3. and 4.
-
         // 4. Check if 'msg.gpio_level' is allowed
         let desired_level = msg.gpio_level.to_lowercase();
         let state_map = get_allowed_states(connection, "level")
@@ -114,7 +112,7 @@ impl Handler<GpioLevel> for DbExecutor {
             state_map
                 .get::<str>(&desired_level)
                 .ok_or(error::ErrorInternalServerError(format!(
-                    "Could not level '{}' in table 'allowed_states'",
+                    "Could not find level '{}' in table 'allowed_states'",
                     desired_level
                 )))?;
         if !allowed {
