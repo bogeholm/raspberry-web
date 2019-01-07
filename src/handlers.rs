@@ -16,7 +16,6 @@ impl Actor for DbExecutor {
 }
 
 pub struct GpioId {
-    // Call it GetState
     pub gpio_id: i32,
 }
 
@@ -24,14 +23,24 @@ impl Message for GpioId {
     type Result = Result<models::Gpio, Error>;
 }
 
-pub struct GpioLevel {
+pub struct CheckGpioLevel {
     pub gpio_id: i32,
     pub gpio_level: String,
 }
 
-impl Message for GpioLevel {
+impl Message for CheckGpioLevel {
     type Result = Result<models::Gpio, Error>;
 }
+
+pub struct SetGpioLevel {
+    pub gpio_id: i32,
+    pub gpio_level: String,
+}
+
+impl Message for SetGpioLevel {
+    type Result = Result<models::Gpio, Error>;
+}
+
 
 impl Handler<GpioId> for DbExecutor {
     type Result = Result<models::Gpio, Error>;
@@ -58,10 +67,10 @@ impl Handler<GpioId> for DbExecutor {
     }
 }
 
-impl Handler<GpioLevel> for DbExecutor {
+impl Handler<CheckGpioLevel> for DbExecutor {
     type Result = Result<models::Gpio, Error>;
 
-    fn handle(&mut self, msg: GpioLevel, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: CheckGpioLevel, _: &mut Self::Context) -> Self::Result {
         let required_gpio_mode = "output";
         use crate::schema::gpio_state::dsl::*;
         let connection = &self
@@ -91,9 +100,11 @@ impl Handler<GpioLevel> for DbExecutor {
                 msg.gpio_id
             )));
         }
-
+        
         // 3. check if gpio_mode = 'output'
-        let gpio_mode_before = gpio_before.gpio_mode.unwrap_or("".to_string());
+        let none_replacement = "".to_string();
+        // https://stackoverflow.com/questions/22282117/how-do-i-borrow-a-reference-to-what-is-inside-an-optiont
+        let gpio_mode_before = gpio_before.gpio_mode.as_ref().unwrap_or(&none_replacement);
         if gpio_mode_before != required_gpio_mode {
             let message = format!(
                 "Level '{}' is not allowed for mode '{}'",
@@ -102,7 +113,7 @@ impl Handler<GpioLevel> for DbExecutor {
             info!("{}", message);
             return Err(error::ErrorInternalServerError(message));
         }
-
+        
         // 4. Check if 'msg.gpio_level' is allowed
         let desired_level = msg.gpio_level.to_lowercase();
         let state_map = get_allowed_states(connection, "level")
@@ -119,6 +130,20 @@ impl Handler<GpioLevel> for DbExecutor {
             info!("Level '{}' is not allowed", desired_level);
             Err(error::ErrorInternalServerError("State not allowed"))?
         }
+
+        Ok(gpio_before)
+    }
+}
+
+impl Handler<SetGpioLevel> for DbExecutor {
+    type Result = Result<models::Gpio, Error>;
+
+    fn handle(&mut self, msg: SetGpioLevel, _: &mut Self::Context) -> Self::Result {
+        use crate::schema::gpio_state::dsl::*;
+        let connection = &self
+            .0
+            .get()
+            .map_err(|_| error::ErrorInternalServerError("Error obtaining database connection"))?;
 
         // 5. Change the level
         let target = gpio_state.filter(gpio_id.eq(msg.gpio_id));

@@ -3,7 +3,8 @@ use parking_lot::Mutex;
 use actix::{Addr};
 use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State};
 use futures::Future;
-use crate::handlers::{DbExecutor, GpioId, GpioLevel};
+use crate::handlers::{DbExecutor, GpioId, CheckGpioLevel};
+use crate::rpi::set_gpio_level_rpi;
 
 #[cfg(target_arch = "armv7")]
 use rppal::gpio::{Gpio, Error::InstanceExists};
@@ -51,15 +52,20 @@ pub fn gpio_status((req, state): (Path<i32>, State<AppState>)) -> FutureResponse
 pub fn set_gpio_level(
     (req, state): (Path<(i32, String)>, State<AppState>), // TODO: Extract multiple elements from path
 ) -> FutureResponse<HttpResponse> {
+    let gpio_id = req.0;
+    let gpio_level = req.1.clone();
     state
         .db
-        .send(GpioLevel {
-            gpio_id: req.0,
-            gpio_level: req.1.clone(),
+        .send(CheckGpioLevel {
+            gpio_id: gpio_id,
+            gpio_level: gpio_level,
         })
         .from_err()
         .and_then(|res| match res {
-            Ok(response) => Ok(HttpResponse::Ok().json(response)),
+            Ok(_) => {
+                //set_gpio_level_rpi(gpio_id, &gpio_level, state.gpio_arc_mutex.clone())
+                Ok(HttpResponse::Ok().body("hello!"))
+            }
             Err(err) => Ok(HttpResponse::InternalServerError()
                 .body(err.to_string())
                 .into()),
