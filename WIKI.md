@@ -25,10 +25,13 @@ Will only be set specifically for the GPIO pins used by the program
 # To Do - Adding `rppal` functionality
 - rpi.rs: <s>`get_gpio_mutex()`</s>
 - rpi.rs: <s>`set_gpio_level_rpi`</s>
-- app.rs: `AppState`
-- app.rs: `create_app_state`
-- lib.rs: `server::new...`
+- app.rs: <s>`AppState`
+- app.rs: <s>`create_app_state`
+- lib.rs: <s>`server::new...`
 - utilities.rs: `set_gpio_level`
+- rename `db.rs` to `handlers.rs`
+- fix integration tests
+- move everything with compilation configuration into rpi.rs (or folder)
 
 # To Do - Code Quality
 1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>

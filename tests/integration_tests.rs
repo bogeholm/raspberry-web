@@ -13,7 +13,7 @@ use diesel_migrations::RunMigrationsError;
 use dotenv::dotenv;
 use std::sync::{Once, ONCE_INIT};
 
-use raspberry_web::app::{create_app_state, gpio_status, set_gpio_level};
+use raspberry_web::app::{AppState, create_gpio_arc_mutex, gpio_status, set_gpio_level};
 use raspberry_web::db::DbExecutor;
 use raspberry_web::schema; //, set_gpio_level};
 
@@ -76,6 +76,7 @@ fn get_testserver_with_state() -> TestServer {
     init_logging_once();
     // https://github.com/actix/actix-website/blob/master/content/docs/testing.md
     let test_server = TestServer::build_with_state(|| {
+        let gpio_arc_mutex = create_gpio_arc_mutex().expect("Could not acquire GPIO");
         // we can start diesel actors
         let addr = SyncArbiter::start(3, || {
             DbExecutor({
@@ -86,7 +87,7 @@ fn get_testserver_with_state() -> TestServer {
             })
         });
         // then we can construct custom state, or it could be `()`
-        create_app_state(addr)
+        AppState{db: addr.clone(), gpio_arc_mutex: gpio_arc_mutex.clone()}
     })
     // register server handlers and start test server
     .start(|app| {

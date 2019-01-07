@@ -19,11 +19,10 @@ mod utilities;
 use actix::{SyncArbiter};
 use actix_web::server;
 use crate::db::DbExecutor;
+use crate::app::AppState;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
-use std::sync::Arc;
-use parking_lot::Mutex;
 
 pub fn setup_and_run() {
     // Read environment variables from .env - must come before env_logger::init()
@@ -35,7 +34,8 @@ pub fn setup_and_run() {
     // Initialize logger
     env_logger::init();
 
-    let _gpio_mutex = rpi::get_gpio_mutex().expect("Unable to acquire Gpio mutex");
+    // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other arcs
+    let gpio_arc_mutex = app::create_gpio_arc_mutex().expect("Could not acquire GPIO");
 
     // Create database connection pool
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
@@ -65,7 +65,7 @@ pub fn setup_and_run() {
 
     let ip_port = format!("{}:{}", hostname, port);
     let _server = server::new(move || app::create_app(
-            addr.clone(), //gpio_mutex.gpio_mutex.clone()
+            AppState{db: addr.clone(), gpio_arc_mutex: gpio_arc_mutex.clone()}
         ))
         .bind(&ip_port)
         .expect(&format!("Can not bind to {}", &ip_port))
