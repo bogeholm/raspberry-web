@@ -57,28 +57,7 @@ pub fn set_gpio_level(
 
     // https://github.com/actix/examples/blob/master/async_db/src/main.rs
     // https://github.com/actix/examples/blob/master/actix_todo/src/api.rs
-    
-    /*
-    state
-    .db
-    .send(CheckGpioLevel {
-        gpio_id: req.0,
-        gpio_level: req.1.clone(),
-    })
-    .from_err()
-    .and_then(|res| 
-        state.db.send(SetGpioLevel {
-            gpio_id: req.0,
-            gpio_level: req.1.clone(),
-        }).from_err())
-    .then(|res| match res {
-        Ok(response) => Ok(HttpResponse::Ok().json(response)),
-        Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))
-    })
-    .responder()
-    */
-
-    
+    // https://stackoverflow.com/questions/54164682/
     state
     .db
     .send(CheckGpioLevel {
@@ -103,39 +82,6 @@ pub fn set_gpio_level(
        Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))
       })
     .responder()
-    
-
-    /*
-    let is_level_allowed = state
-        .db
-        .send(CheckGpioLevel {
-            gpio_id: req.0,
-            gpio_level: req.1.clone(),
-        })
-        // https://stackoverflow.com/questions/53321373
-        .wait();
-
-    match is_level_allowed {
-        Ok (_) => {
-            state
-            .db
-            .send(SetGpioLevel {
-                gpio_id: req.0,
-                gpio_level: req.1.clone(),
-            })
-            .from_err()
-            .and_then(|res| match res {
-                Ok(response) => Ok(HttpResponse::Ok().json(response)),
-                Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))//.into()
-            })
-            .responder()
-        },
-        Err(not_allowed) => {Box::new(fut_ok(
-            Ok(HttpResponse::InternalServerError().body(not_allowed.to_string()))
-            ))
-        }
-    }
-    */
 }
 
 /// creates and returns the app after mounting all routes/resources
