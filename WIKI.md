@@ -28,6 +28,7 @@ Will only be set specifically for the GPIO pins used by the program
 - app.rs: <s>`AppState`</s>
 - app.rs: <s>`create_app_state`</s>
 - lib.rs: <s>`server::new...`</s>
+- app.rs: <s>`pub fn set_gpio_level()`</s>
 - utilities.rs: `set_gpio_level`
 - <s>rename `db.rs` to `handlers.rs`</s>
 - <s>fix integration tests</s>

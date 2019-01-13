@@ -1,10 +1,12 @@
 use std::sync::Arc;
 use parking_lot::Mutex;
 use actix::{Addr};
-use actix_web::{error, Error};
-use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State};
-use futures::Future;
+use actix_web::Error;
+use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State}; //Error};
+use futures::{Future, future};//, future::FutureResult};
 use crate::handlers::{DbExecutor, GpioId, CheckGpioLevel, SetGpioLevel};
+use crate::models;
+
 //use crate::rpi::set_gpio_level_rpi;
 
 #[cfg(target_arch = "armv7")]
@@ -51,55 +53,89 @@ pub fn gpio_status((req, state): (Path<i32>, State<AppState>)) -> FutureResponse
 
 /// Set GPIO level to HIGH or LOW
 pub fn set_gpio_level(
-    (req, state): (Path<(i32, String)>, State<AppState>), // TODO: Extract multiple elements from path
-) -> FutureResponse<HttpResponse> {
-    let gpio_id = req.0;
-    let gpio_level = req.1.clone();
+    (req, state): (Path<(i32, String)>, State<AppState>)) -> FutureResponse<HttpResponse> {
 
     // https://github.com/actix/examples/blob/master/async_db/src/main.rs
-    state
-        .db
-        .send(CheckGpioLevel {
-            gpio_id: gpio_id,
-            gpio_level: gpio_level,
-        })
-        .from_err()
-        .or_else(|err: Error | Ok(HttpResponse::InternalServerError()
-            .body("feilure!!!!!!!")
-            .into())
-            );
-        /*
-        .from_err()
-        .and_then(|res| match res {
-            Ok(_) => {},
-            Err(err) => Ok(HttpResponse::InternalServerError()
-                .body(err.to_string())
-                .into()),
-        });
-    */
-
+    // https://github.com/actix/examples/blob/master/actix_todo/src/api.rs
+    
     /*
     state
-        .db
-        .send
+    .db
+    .send(CheckGpioLevel {
+        gpio_id: req.0,
+        gpio_level: req.1.clone(),
+    })
+    .from_err()
+    .and_then(|res| 
+        state.db.send(SetGpioLevel {
+            gpio_id: req.0,
+            gpio_level: req.1.clone(),
+        }).from_err())
+    .then(|res| match res {
+        Ok(response) => Ok(HttpResponse::Ok().json(response)),
+        Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))
+    })
+    .responder()
     */
 
+    
     state
+    .db
+    .send(CheckGpioLevel {
+            gpio_id: req.0,
+            gpio_level: req.1.clone(),
+    })
+    .from_err()
+    .and_then(|res| future::result(res).from_err())
+    .and_then(move |_res| 
+        // Do some additional logic here
+        state
         .db
         .send(SetGpioLevel {
-            gpio_id: gpio_id,
-            gpio_level: gpio_level,
+            gpio_id: req.0,
+            gpio_level: req.1.clone(),
         })
         .from_err()
-        .and_then(|res| match res {
-            Ok(response) => Ok(HttpResponse::Ok().json(response)),
-            Err(err) => Ok(HttpResponse::InternalServerError()
-                .body(err.to_string())
-                .into()),
-        })
-        .responder()
+    )
+    .and_then(|res| future::result(res).from_err())
+    .then(|res: Result<models::Gpio, Error>| match res {
+       Ok(response) => Ok(HttpResponse::Ok().json(response)),
+       Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))
+      })
+    .responder()
+    
 
-    // set_gpio_level_rpi(gpio_id, &gpio_level, state.gpio_arc_mutex.clone());
+    /*
+    let is_level_allowed = state
+        .db
+        .send(CheckGpioLevel {
+            gpio_id: req.0,
+            gpio_level: req.1.clone(),
+        })
+        // https://stackoverflow.com/questions/53321373
+        .wait();
+
+    match is_level_allowed {
+        Ok (_) => {
+            state
+            .db
+            .send(SetGpioLevel {
+                gpio_id: req.0,
+                gpio_level: req.1.clone(),
+            })
+            .from_err()
+            .and_then(|res| match res {
+                Ok(response) => Ok(HttpResponse::Ok().json(response)),
+                Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))//.into()
+            })
+            .responder()
+        },
+        Err(not_allowed) => {Box::new(fut_ok(
+            Ok(HttpResponse::InternalServerError().body(not_allowed.to_string()))
+            ))
+        }
+    }
+    */
 }
 
 /// creates and returns the app after mounting all routes/resources
