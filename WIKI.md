@@ -34,6 +34,10 @@ Will only be set specifically for the GPIO pins used by the program
 - <s>fix integration tests</s>
 - move everything with compilation configuration into rpi.rs (or folder)
 
+# DevOps
+- Dockerfile based on `rust:latest`
+- GitLab CI including build on ARM
+
 # To Do - Code Quality
 1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>
 2. Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
@@ -42,3 +46,10 @@ Will only be set specifically for the GPIO pins used by the program
 5. Unit tests
 6. <s>Integration tests</s>
 7. Check responses in integration tests
+
+# Publication to `crates.io`
+- Read good guide
+- Rename to `raspberry-web`
+
+# Documentation
+- Good `README.md`

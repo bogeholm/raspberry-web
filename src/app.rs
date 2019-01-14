@@ -6,6 +6,7 @@ use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpRespo
 use futures::{Future, future};//, future::FutureResult};
 use crate::handlers::{DbExecutor, GpioId, CheckGpioLevel, SetGpioLevel};
 use crate::models;
+use crate::rpi;
 
 //use crate::rpi::set_gpio_level_rpi;
 
@@ -66,8 +67,11 @@ pub fn set_gpio_level(
     })
     .from_err()
     .and_then(|res| future::result(res).from_err())
-    .and_then(move |_res| 
+    .and_then(move |_res| {
         // Do some additional logic here
+        let _level_updated = rpi::set_gpio_level_rpi(req.0, &req.1.clone(), state.gpio_arc_mutex.clone());
+
+        // Update database to correspond with above
         state
         .db
         .send(SetGpioLevel {
@@ -75,7 +79,7 @@ pub fn set_gpio_level(
             gpio_level: req.1.clone(),
         })
         .from_err()
-    )
+    })
     .and_then(|res| future::result(res).from_err())
     .then(|res: Result<models::Gpio, Error>| match res {
        Ok(response) => Ok(HttpResponse::Ok().json(response)),
