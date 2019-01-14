@@ -57,7 +57,7 @@ pub fn set_gpio_level(
     (req, state): (Path<(i32, String)>, State<AppState>)) -> FutureResponse<HttpResponse> {
     let path_gpio_id: i32 = req.0;
     let path_gpio_level = req.1.clone();
-    let path_gpio_level_2 = req.1.clone(); // TODO - this is horrible
+    let path_gpio_level_copy = req.1.clone(); // TODO - this is horrible
     let gpio_arc_mutex = state.gpio_arc_mutex.clone();
 
     // https://github.com/actix/examples/blob/master/async_db/src/main.rs
@@ -66,8 +66,8 @@ pub fn set_gpio_level(
     state
     .db
     .send(CheckGpioLevel {
-            gpio_id: path_gpio_id,
-            gpio_level: (&path_gpio_level).to_string(),
+        gpio_id: path_gpio_id,
+        gpio_level: (&path_gpio_level).to_string(),
     })
     .from_err()
     .and_then(|res| future::result(res).from_err())
@@ -82,14 +82,14 @@ pub fn set_gpio_level(
         .db
         .send(SetGpioLevel {
             gpio_id: path_gpio_id,
-            gpio_level: (&path_gpio_level_2).to_string(),
+            gpio_level: (&path_gpio_level_copy).to_string(),
         })
         .from_err()
     })
     .and_then(|res| future::result(res).from_err())
     .then(|res: Result<models::Gpio, Error>| match res {
-       Ok(response) => Ok(HttpResponse::Ok().json(response)),
-       Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))
+        Ok(response) => Ok(HttpResponse::Ok().json(response)),
+        Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string()))
       })
     .responder()
 }

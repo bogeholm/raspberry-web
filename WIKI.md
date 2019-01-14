@@ -21,6 +21,7 @@ Will only be set specifically for the GPIO pins used by the program
 13. <s>Get list of gpio id's from DB</s>
 14. <s>Unify caps in database</s>
 15. <s>Split functionality into `main.rs` and `lib.rs`</s>
+16. Check GPIO also when checking status
 
 # To Do - Adding `rppal` functionality
 - rpi.rs: <s>`get_gpio_mutex()`</s>
