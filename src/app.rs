@@ -79,6 +79,8 @@ pub fn set_gpio_level(
             gpio_level: req.1.clone(),
         })
         .from_err()
+
+        
     })
     .and_then(|res| future::result(res).from_err())
     .then(|res: Result<models::Gpio, Error>| match res {
