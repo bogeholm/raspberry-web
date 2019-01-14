@@ -117,7 +117,7 @@ pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &Sqli
         _ => debug!("GPIOS_LEVEL_LOW not set"),
     }
 
-    // Should be set to LOW
+    // Should be set to HIGH
     match map.get("GPIOS_LEVEL_HIGH") {
         Some(vec) => {
             for idx in vec.iter() {

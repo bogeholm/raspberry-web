@@ -55,6 +55,10 @@ pub fn gpio_status((req, state): (Path<i32>, State<AppState>)) -> FutureResponse
 /// Set GPIO level to HIGH or LOW
 pub fn set_gpio_level(
     (req, state): (Path<(i32, String)>, State<AppState>)) -> FutureResponse<HttpResponse> {
+    let path_gpio_id: i32 = req.0;
+    let path_gpio_level = req.1.clone();
+    let path_gpio_level_2 = req.1.clone(); // TODO - this is horrible
+    let gpio_arc_mutex = state.gpio_arc_mutex.clone();
 
     // https://github.com/actix/examples/blob/master/async_db/src/main.rs
     // https://github.com/actix/examples/blob/master/actix_todo/src/api.rs
@@ -62,25 +66,25 @@ pub fn set_gpio_level(
     state
     .db
     .send(CheckGpioLevel {
-            gpio_id: req.0,
-            gpio_level: req.1.clone(),
+            gpio_id: path_gpio_id,
+            gpio_level: (&path_gpio_level).to_string(),
     })
     .from_err()
     .and_then(|res| future::result(res).from_err())
-    .and_then(move |_res| {
-        // Do some additional logic here
-        let _level_updated = rpi::set_gpio_level_rpi(req.0, &req.1.clone(), state.gpio_arc_mutex.clone());
-
+    .and_then(move |_| {
+        // Update GPIO level on RPi
+        let level_updated = rpi::set_gpio_level_rpi(path_gpio_id, &path_gpio_level, gpio_arc_mutex);
+        future::result(level_updated).from_err()
+    })
+    .and_then(move |_| {
         // Update database to correspond with above
         state
         .db
         .send(SetGpioLevel {
-            gpio_id: req.0,
-            gpio_level: req.1.clone(),
+            gpio_id: path_gpio_id,
+            gpio_level: (&path_gpio_level_2).to_string(),
         })
         .from_err()
-
-        
     })
     .and_then(|res| future::result(res).from_err())
     .then(|res: Result<models::Gpio, Error>| match res {
