@@ -1,10 +1,10 @@
+use crate::models;
+use crate::utilities::get_allowed_states;
 use actix::{Actor, Handler, Message, SyncContext};
 use actix_web::{error, Error};
 use chrono::Local;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
-use crate::models;
-use crate::utilities::get_allowed_states;
 
 //use utilities::get_allowed_states;
 
@@ -40,7 +40,6 @@ pub struct SetGpioLevel {
 impl Message for SetGpioLevel {
     type Result = Result<models::Gpio, Error>;
 }
-
 
 impl Handler<GpioId> for DbExecutor {
     type Result = Result<models::Gpio, Error>;
@@ -100,7 +99,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
                 msg.gpio_id
             )));
         }
-        
+
         // 3. check if gpio_mode = 'output'
         let none_replacement = "".to_string();
         // https://stackoverflow.com/questions/22282117/how-do-i-borrow-a-reference-to-what-is-inside-an-optiont
@@ -113,7 +112,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
             info!("{}", message);
             return Err(error::ErrorInternalServerError(message));
         }
-        
+
         // 4. Check if 'msg.gpio_level' is allowed
         let desired_level = msg.gpio_level.to_lowercase();
         let state_map = get_allowed_states(connection, "level")

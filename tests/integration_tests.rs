@@ -4,8 +4,8 @@ extern crate diesel_migrations;
 extern crate log;
 extern crate raspberry_web;
 
-use actix::{SyncArbiter};
-use actix_web::{http};
+use actix::SyncArbiter;
+use actix_web::http;
 use actix_web::test::TestServer;
 use diesel::prelude::*;
 use diesel::{r2d2::ConnectionManager, r2d2::Pool, SqliteConnection};
@@ -13,7 +13,7 @@ use diesel_migrations::RunMigrationsError;
 use dotenv::dotenv;
 use std::sync::{Once, ONCE_INIT};
 
-use raspberry_web::app::{AppState, create_gpio_arc_mutex, gpio_status, set_gpio_level};
+use raspberry_web::app::{create_gpio_arc_mutex, gpio_status, set_gpio_level, AppState};
 use raspberry_web::handlers::DbExecutor;
 use raspberry_web::schema; //, set_gpio_level};
 
@@ -87,7 +87,10 @@ fn get_testserver_with_state() -> TestServer {
             })
         });
         // then we can construct custom state, or it could be `()`
-        AppState{db: addr.clone(), gpio_arc_mutex: gpio_arc_mutex.clone()}
+        AppState {
+            db: addr.clone(),
+            gpio_arc_mutex: gpio_arc_mutex.clone(),
+        }
     })
     // register server handlers and start test server
     .start(|app| {

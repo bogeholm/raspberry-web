@@ -1,7 +1,7 @@
-use chrono::Local;
-use diesel::prelude::*;
 use crate::models;
 use crate::schema::gpio_state::dsl::*;
+use chrono::Local;
+use diesel::prelude::*;
 use std::collections::HashMap;
 
 pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), diesel::result::Error> {

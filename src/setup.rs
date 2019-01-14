@@ -1,9 +1,9 @@
+use crate::utilities::{set_gpio_in_use, set_gpio_level, set_gpio_mode};
 use diesel::SqliteConnection;
 use std::collections::HashMap;
 use std::env;
 use std::env::VarError;
 use std::num::ParseIntError;
-use crate::utilities::{set_gpio_in_use, set_gpio_level, set_gpio_mode};
 
 pub fn read_env_delimiter() -> String {
     // Get delimiter from .env - if not set, use

@@ -16,10 +16,10 @@ pub mod schema;
 mod setup;
 mod utilities;
 
-use actix::{SyncArbiter};
-use actix_web::server;
-use crate::handlers::DbExecutor;
 use crate::app::AppState;
+use crate::handlers::DbExecutor;
+use actix::SyncArbiter;
+use actix_web::server;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
 use std::env;
@@ -64,12 +64,15 @@ pub fn setup_and_run() {
     let addr = SyncArbiter::start(3, move || DbExecutor(pool.clone()));
 
     let ip_port = format!("{}:{}", hostname, port);
-    let _server = server::new(move || app::create_app(
-            AppState{db: addr.clone(), gpio_arc_mutex: gpio_arc_mutex.clone()}
-        ))
-        .bind(&ip_port)
-        .expect(&format!("Can not bind to {}", &ip_port))
-        .start();
+    let _server = server::new(move || {
+        app::create_app(AppState {
+            db: addr.clone(),
+            gpio_arc_mutex: gpio_arc_mutex.clone(),
+        })
+    })
+    .bind(&ip_port)
+    .expect(&format!("Can not bind to {}", &ip_port))
+    .start();
 
     let _ = sys.run();
 }
