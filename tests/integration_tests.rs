@@ -13,7 +13,7 @@ use diesel_migrations::RunMigrationsError;
 use dotenv::dotenv;
 use std::sync::{Once, ONCE_INIT};
 
-use raspberry_web::app::{create_gpio_arc_mutex, gpio_status, set_gpio_level, AppState};
+use raspberry_web::app::{create_gpio_arc_mutex, gpio_status_route, set_gpio_level_route, AppState};
 use raspberry_web::handlers::DbExecutor;
 use raspberry_web::schema; //, set_gpio_level};
 
@@ -95,10 +95,10 @@ fn get_testserver_with_state() -> TestServer {
     // register server handlers and start test server
     .start(|app| {
         app.resource("/status/{id}", |r| {
-            r.method(http::Method::GET).with(gpio_status)
+            r.method(http::Method::GET).with(gpio_status_route)
         })
         .resource("/set_level/{id}/{level}", |r| {
-            r.method(http::Method::GET).with(set_gpio_level)
+            r.method(http::Method::GET).with(set_gpio_level_route)
         });
     });
     test_server

@@ -36,7 +36,7 @@ pub fn create_gpio_arc_mutex() -> Result<Arc<Mutex<i32>>, InstanceExists> {
 }
 
 /// Get status of GPIO
-pub fn gpio_status((req, state): (Path<i32>, State<AppState>)) -> FutureResponse<HttpResponse> {
+pub fn gpio_status_route((req, state): (Path<i32>, State<AppState>)) -> FutureResponse<HttpResponse> {
     state
         .db
         .send(GpioId {
@@ -51,7 +51,7 @@ pub fn gpio_status((req, state): (Path<i32>, State<AppState>)) -> FutureResponse
 }
 
 /// Set GPIO level to HIGH or LOW
-pub fn set_gpio_level(
+pub fn set_gpio_level_route(
     (req, state): (Path<(i32, String)>, State<AppState>),
 ) -> FutureResponse<HttpResponse> {
     let path_gpio_id: i32 = req.0;
@@ -100,9 +100,9 @@ pub fn create_app(app_state: AppState) -> App<AppState> {
         // enable logger
         .middleware(middleware::Logger::default())
         .resource("/status/{id}", |r| {
-            r.method(http::Method::GET).with(gpio_status)
+            r.method(http::Method::GET).with(gpio_status_route)
         })
         .resource("/set_level/{id}/{level}", |r| {
-            r.method(http::Method::GET).with(set_gpio_level)
+            r.method(http::Method::GET).with(set_gpio_level_route)
         })
 }
