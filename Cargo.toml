@@ -1,6 +1,6 @@
 [package]
 name = "raspberry-web"
-version = "0.1.22"
+version = "0.1.0"
 authors = ["bogeholm <troelsmikkelsen@gmail.com>"]
 edition = "2018"
 
