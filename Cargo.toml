@@ -3,6 +3,8 @@ name = "raspberry-web"
 version = "0.1.0"
 authors = ["bogeholm <troelsmikkelsen@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Control the GPIO pins on your Raspberry Pi with a simple web service. Currently supports output only."
 
 [dependencies]
 actix = "0.7.9"
