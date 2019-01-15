@@ -6,22 +6,22 @@ Will only be set specifically for the GPIO pins used by the program
 1. diesel setup --database-url=db/raspberry-web.sqlite
 
 ## To Do - General Functionality
-1. <s>Read GPIO list from `.env`</s>
-2. <s>Finish all db_setup</s>
-3. <s>`get_gpio_state()`</s>
-4. <s>`gpio_in_use()`</s>
-5. <s>`set_gpio_state()`</s>
-6. <s>Implement `r2d2` pool for database</s>
-7. <s>Actor for database?</s>
-8. <s>Add ports to `.env`</s>
-9. <s>Add actix routes</s>
-10. <s>Check if Gpio is set to Outout before changing</s>
-11. <s>Return `Result<(), Error>` from more functions</s>
-13. <s>Get list of gpio id's from DB</s>
-14. <s>Unify caps in database</s>
-15. <s>Split functionality into `main.rs` and `lib.rs`</s>
-17. During setup, check that GPIOs where LEVEL, OUTPUT and MODE are set are also set to IN_USE
-18. <s>`setup.rs` + `utilities.rs`: return `Result` </s>
+- <s>Read GPIO list from `.env`</s>
+- <s>Finish all db_setup</s>
+- <s>`get_gpio_state()`</s>
+- <s>`gpio_in_use()`</s>
+- <s>`set_gpio_state()`</s>
+- <s>Implement `r2d2` pool for database</s>
+- <s>Actor for database?</s>
+- <s>Add ports to `.env`</s>
+- <s>Add actix routes</s>
+- <s>Check if Gpio is set to Outout before changing</s>
+- <s>Return `Result<(), Error>` from more functions</s>
+- <s>Get list of gpio id's from DB</s>
+- <s>Unify caps in database</s>
+- <s>Split functionality into `main.rs` and `lib.rs`</s>
+- During setup, check that GPIOs where LEVEL, OUTPUT and MODE are set are also set to IN_USE
+- <s>`setup.rs` + `utilities.rs`: return `Result` </s>
 
 ## To Do - Adding `rppal` functionality
 - <s>rpi.rs: `get_gpio_mutex()`</s>
@@ -36,7 +36,7 @@ Will only be set specifically for the GPIO pins used by the program
 
 ## To Do - Code Quality
 - <s>Fix `schema.rs` -> `Nullable<Text>`</s>
-- Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
+- <s>Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication</s>
 - <s>Integration tests</s>
 - <s>Move everything with compilation configuration into rpi.rs</s>
 - <s>Rename duplicate function names in `utilities.rs`</s>

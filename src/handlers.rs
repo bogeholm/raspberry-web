@@ -113,7 +113,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
             return Err(error::ErrorInternalServerError(message));
         }
 
-        // 4. Check if 'msg.gpio_level' is allowed
+        // 4. Check if desired level 'msg.gpio_level' is allowed
         let desired_level = msg.gpio_level.to_lowercase();
         let state_map = get_allowed_states(connection, "level")
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
