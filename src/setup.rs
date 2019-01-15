@@ -78,7 +78,7 @@ pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str
     return parsed_variables;
 }
 
-pub fn _validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), VarError> {
+pub fn _validate_setup(_map: &HashMap<&'static str, Vec<i32>>) -> Result<(), VarError> {
     // Unimplemented
     Ok(())
 }
