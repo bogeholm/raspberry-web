@@ -54,7 +54,7 @@ pub fn get_allowed_states(
     Ok(res)
 }
 
-pub fn set_gpio_in_use(
+pub fn set_gpio_in_use_db(
     id: i32,
     state: i32,
     conn: &SqliteConnection,
@@ -87,7 +87,7 @@ pub fn set_gpio_in_use(
     Ok(())
 }
 
-pub fn set_gpio_mode(
+pub fn set_gpio_mode_db(
     id: i32,
     mode: &str,
     conn: &SqliteConnection,
@@ -120,7 +120,7 @@ pub fn set_gpio_mode(
     Ok(())
 }
 
-pub fn set_gpio_level(
+pub fn set_gpio_level_db(
     id: i32,
     level: &str,
     conn: &SqliteConnection,

@@ -4,6 +4,15 @@ use rppal::{Error::InstanceExists, Gpio};
 use std::io::{Error, ErrorKind};
 use std::sync::Arc;
 
+#[cfg(target_arch = "armv7")]
+use rppal::gpio::{Error::InstanceExists, Gpio};
+
+#[cfg(not(target_arch = "armv7"))]
+pub type GpioArcMutex = Arc<Mutex<i32>>;
+
+#[cfg(target_arch = "armv7")]
+pub type GpioArcMutex = Arc<Mutex<Gpio>>;
+
 #[cfg(not(target_arch = "armv7"))]
 pub fn set_gpio_level_rpi(
     _gpio_num: i32,

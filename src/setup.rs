@@ -1,4 +1,5 @@
-use crate::utilities::{set_gpio_in_use, set_gpio_level, set_gpio_mode};
+use crate::rpi::{set_gpio_level_rpi, GpioArcMutex};
+use crate::utilities::{set_gpio_in_use_db, set_gpio_level_db, set_gpio_mode_db};
 use diesel::SqliteConnection;
 use std::collections::HashMap;
 use std::env;
@@ -80,12 +81,13 @@ pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str
 pub fn commit_variables_to_db(
     map: &HashMap<&'static str, Vec<i32>>,
     conn: &SqliteConnection,
+    gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), Error> {
     // Should be set to 1
     match map.get("GPIOS_IN_USE") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_in_use(*idx, 1, conn)
+                let _ = set_gpio_in_use_db(*idx, 1, conn)
                     .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
@@ -96,7 +98,7 @@ pub fn commit_variables_to_db(
     match map.get("GPIOS_MODE_OUTPUT") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_mode(*idx, "output", conn)
+                let _ = set_gpio_mode_db(*idx, "output", conn)
                     .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
@@ -107,7 +109,7 @@ pub fn commit_variables_to_db(
     match map.get("GPIOS_MODE_INPUT") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_mode(*idx, "input", conn)
+                let _ = set_gpio_mode_db(*idx, "input", conn)
                     .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
@@ -118,7 +120,8 @@ pub fn commit_variables_to_db(
     match map.get("GPIOS_LEVEL_LOW") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_level(*idx, "low", conn)
+                let _ = set_gpio_level_rpi(*idx, "low", gpio_arc_mutex.clone())?;
+                let _ = set_gpio_level_db(*idx, "low", conn)
                     .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
@@ -129,7 +132,8 @@ pub fn commit_variables_to_db(
     match map.get("GPIOS_LEVEL_HIGH") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_level(*idx, "high", conn)
+                let _ = set_gpio_level_rpi(*idx, "high", gpio_arc_mutex.clone())?;
+                let _ = set_gpio_level_db(*idx, "high", conn)
                     .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }

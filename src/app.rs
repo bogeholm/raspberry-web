@@ -8,8 +8,6 @@ use futures::{future, Future}; //, future::FutureResult};
 use parking_lot::Mutex;
 use std::sync::Arc;
 
-//use crate::rpi::set_gpio_level_rpi;
-
 #[cfg(target_arch = "armv7")]
 use rppal::gpio::{Error::InstanceExists, Gpio};
 
@@ -24,7 +22,7 @@ pub struct AppState {
 #[cfg(target_arch = "armv7")]
 pub struct AppState {
     pub db: Addr<DbExecutor>,
-    pub gpio_arc_mutex: Arc<Mutex<iGpio>>,
+    pub gpio_arc_mutex: Arc<Mutex<Gpio>>,
 }
 
 #[cfg(not(target_arch = "armv7"))]
@@ -58,7 +56,7 @@ pub fn set_gpio_level(
 ) -> FutureResponse<HttpResponse> {
     let path_gpio_id: i32 = req.0;
     let path_gpio_level = req.1.clone();
-    let path_gpio_level_copy = req.1.clone(); // TODO - this is horrible
+    let path_gpio_level_copy = req.1.clone(); // TODO - OMG this is horrible
     let gpio_arc_mutex = state.gpio_arc_mutex.clone();
 
     // https://github.com/actix/examples/blob/master/async_db/src/main.rs

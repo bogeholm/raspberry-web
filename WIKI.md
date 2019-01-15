@@ -30,7 +30,7 @@ Will only be set specifically for the GPIO pins used by the program
 - <s>app.rs: `create_app_state`</s>
 - <s>lib.rs: `server::new...`</s>
 - <s>app.rs: `pub fn set_gpio_level()`</s>
-- utilities.rs: `set_gpio_level`
+- <s>utilities.rs: `set_gpio_level`</s>
 - <s>rename `db.rs` to `handlers.rs`</s>
 - <s>fix integration tests</s>
 
@@ -39,6 +39,8 @@ Will only be set specifically for the GPIO pins used by the program
 - <s>Fix `schema.rs` -> `Nullable<Text>`</s>
 - Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
 - <s>Integration tests</s>
+- Move everything with compilation configuration into rpi.rs
+- <s>Rename duplicate function names in `utilities.rs`</s>
 
 ## Publication to `crates.io`
 - Read good guide
@@ -63,4 +65,5 @@ Will only be set specifically for the GPIO pins used by the program
 - Check responses in integration tests
 - Organize in directories
 - Consistent logging strategy
-- Move everything with compilation configuration into rpi.rs (or folder)
+- Fix `app::set_gpio_level()` double clone travesty
+- More use of `pub type GpioArcMutex`

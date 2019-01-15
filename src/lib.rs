@@ -57,7 +57,7 @@ pub fn setup_and_run() {
     // Parse env_keys, commit to database
     let parsed_variables = setup::read_env_to_hashmap(&env_keys);
     // TODO: check consistency of HashMap
-    setup::commit_variables_to_db(&parsed_variables, &connection)
+    setup::commit_variables_to_db(&parsed_variables, &connection, gpio_arc_mutex.clone())
         .expect("Error when setting up system");
 
     let sys = actix::System::new("raspberry-web");
