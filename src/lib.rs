@@ -11,7 +11,7 @@ extern crate serde_derive;
 pub mod app;
 pub mod handlers;
 mod models;
-mod rpi;
+pub mod rpi;
 pub mod schema;
 mod setup;
 mod utilities;
@@ -35,7 +35,7 @@ pub fn setup_and_run() {
     env_logger::init();
 
     // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other arcs
-    let gpio_arc_mutex = app::create_gpio_arc_mutex().expect("Could not acquire GPIO");
+    let gpio_arc_mutex = rpi::create_gpio_arc_mutex().expect("Could not acquire GPIO");
 
     // Create database connection pool
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);

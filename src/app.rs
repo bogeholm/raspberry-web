@@ -4,39 +4,18 @@ use crate::rpi;
 use actix::Addr;
 use actix_web::Error;
 use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State}; //Error};
-use futures::{future, Future}; //, future::FutureResult};
-use parking_lot::Mutex;
-use std::sync::Arc;
-
-#[cfg(target_arch = "armv7")]
-use rppal::gpio::{Error::InstanceExists, Gpio};
+use futures::{future, Future};
 
 /// State with DbExecutor address
-#[cfg(not(target_arch = "armv7"))]
 pub struct AppState {
     pub db: Addr<DbExecutor>,
-    pub gpio_arc_mutex: Arc<Mutex<i32>>,
-}
-
-/// State with DbExecutor address
-#[cfg(target_arch = "armv7")]
-pub struct AppState {
-    pub db: Addr<DbExecutor>,
-    pub gpio_arc_mutex: Arc<Mutex<Gpio>>,
-}
-
-#[cfg(not(target_arch = "armv7"))]
-pub fn create_gpio_arc_mutex() -> Result<Arc<Mutex<i32>>, String> {
-    Ok(Arc::new(Mutex::new(0)))
-}
-
-#[cfg(target_arch = "armv7")]
-pub fn create_gpio_arc_mutex() -> Result<Arc<Mutex<i32>>, InstanceExists> {
-    Arc::new(Mutex::new(Gpio::new()))?
+    pub gpio_arc_mutex: rpi::GpioArcMutex,
 }
 
 /// Get status of GPIO
-pub fn gpio_status_route((req, state): (Path<i32>, State<AppState>)) -> FutureResponse<HttpResponse> {
+pub fn gpio_status_route(
+    (req, state): (Path<i32>, State<AppState>),
+) -> FutureResponse<HttpResponse> {
     state
         .db
         .send(GpioId {

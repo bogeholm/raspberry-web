@@ -13,9 +13,10 @@ use diesel_migrations::RunMigrationsError;
 use dotenv::dotenv;
 use std::sync::{Once, ONCE_INIT};
 
-use raspberry_web::app::{create_gpio_arc_mutex, gpio_status_route, set_gpio_level_route, AppState};
+use raspberry_web::app::{gpio_status_route, set_gpio_level_route, AppState};
 use raspberry_web::handlers::DbExecutor;
-use raspberry_web::schema; //, set_gpio_level};
+use raspberry_web::rpi::create_gpio_arc_mutex;
+use raspberry_web::schema;
 
 embed_migrations!("migrations");
 

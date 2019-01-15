@@ -34,12 +34,11 @@ Will only be set specifically for the GPIO pins used by the program
 - <s>rename `db.rs` to `handlers.rs`</s>
 - <s>fix integration tests</s>
 
-
 ## To Do - Code Quality
 - <s>Fix `schema.rs` -> `Nullable<Text>`</s>
 - Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
 - <s>Integration tests</s>
-- Move everything with compilation configuration into rpi.rs
+- <s>Move everything with compilation configuration into rpi.rs</s>
 - <s>Rename duplicate function names in `utilities.rs`</s>
 
 ## Publication to `crates.io`
