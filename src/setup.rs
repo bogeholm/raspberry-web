@@ -3,6 +3,7 @@ use diesel::SqliteConnection;
 use std::collections::HashMap;
 use std::env;
 use std::env::VarError;
+use std::io::{Error, ErrorKind};
 use std::num::ParseIntError;
 
 pub fn read_env_delimiter() -> String {
@@ -76,12 +77,16 @@ pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str
     return parsed_variables;
 }
 
-pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &SqliteConnection) {
+pub fn commit_variables_to_db(
+    map: &HashMap<&'static str, Vec<i32>>,
+    conn: &SqliteConnection,
+) -> Result<(), Error> {
     // Should be set to 1
     match map.get("GPIOS_IN_USE") {
         Some(vec) => {
             for idx in vec.iter() {
-                set_gpio_in_use(*idx, 1, conn); // Logging happens in db_utilities
+                let _ = set_gpio_in_use(*idx, 1, conn)
+                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
         _ => debug!("GPIOS_IN_USE not set"),
@@ -91,7 +96,8 @@ pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &Sqli
     match map.get("GPIOS_MODE_OUTPUT") {
         Some(vec) => {
             for idx in vec.iter() {
-                set_gpio_mode(*idx, "output", conn); // Logging happens in db_utilities
+                let _ = set_gpio_mode(*idx, "output", conn)
+                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
         _ => debug!("GPIOS_MODE_OUTPUT not set"),
@@ -101,7 +107,8 @@ pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &Sqli
     match map.get("GPIOS_MODE_INPUT") {
         Some(vec) => {
             for idx in vec.iter() {
-                set_gpio_mode(*idx, "input", conn); // Logging happens in db_utilities
+                let _ = set_gpio_mode(*idx, "input", conn)
+                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
         _ => debug!("GPIOS_MODE_INPUT not set"),
@@ -111,7 +118,8 @@ pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &Sqli
     match map.get("GPIOS_LEVEL_LOW") {
         Some(vec) => {
             for idx in vec.iter() {
-                set_gpio_level(*idx, "low", conn); // Logging happens in db_utilities
+                let _ = set_gpio_level(*idx, "low", conn)
+                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
         _ => debug!("GPIOS_LEVEL_LOW not set"),
@@ -121,9 +129,11 @@ pub fn commit_variables_to_db(map: &HashMap<&'static str, Vec<i32>>, conn: &Sqli
     match map.get("GPIOS_LEVEL_HIGH") {
         Some(vec) => {
             for idx in vec.iter() {
-                set_gpio_level(*idx, "high", conn); // Logging happens in db_utilities
+                let _ = set_gpio_level(*idx, "high", conn)
+                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
             }
         }
         _ => debug!("GPIOS_LEVEL_HIGH not set"),
     }
+    Ok(())
 }

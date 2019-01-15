@@ -54,8 +54,11 @@ pub fn get_allowed_states(
     Ok(res)
 }
 
-// Consider returning result
-pub fn set_gpio_in_use(id: i32, state: i32, conn: &SqliteConnection) {
+pub fn set_gpio_in_use(
+    id: i32,
+    state: i32,
+    conn: &SqliteConnection,
+) -> Result<(), diesel::result::Error> {
     let target = gpio_state.filter(gpio_id.eq(id));
 
     let result = diesel::update(target)
@@ -73,15 +76,22 @@ pub fn set_gpio_in_use(id: i32, state: i32, conn: &SqliteConnection) {
                 warn! {"SQL statement 'in_use={}' for GPIO #{} affects {} rows", state, id, val};
             }
         }
-        Err(err) => error!(
-            "Failed to update 'in_use={}' for GPIO #{}: {:?}",
-            state, id, err
-        ),
+        Err(err) => {
+            error!(
+                "Failed to update 'in_use={}' for GPIO #{}: {:?}",
+                state, id, err
+            );
+            return Err(err);
+        }
     }
+    Ok(())
 }
 
-// Consider returning result
-pub fn set_gpio_mode(id: i32, mode: &str, conn: &SqliteConnection) {
+pub fn set_gpio_mode(
+    id: i32,
+    mode: &str,
+    conn: &SqliteConnection,
+) -> Result<(), diesel::result::Error> {
     let target = gpio_state.filter(gpio_id.eq(id));
 
     let result = diesel::update(target)
@@ -99,15 +109,22 @@ pub fn set_gpio_mode(id: i32, mode: &str, conn: &SqliteConnection) {
                 warn! {"SQL statement 'gpio_mode={}' for GPIO #{} affects {} rows", mode, id, val};
             }
         }
-        Err(err) => error!(
-            "Failed to update 'gpio_mode={}' for GPIO #{}: {:?}",
-            mode, id, err
-        ),
+        Err(err) => {
+            error!(
+                "Failed to update 'gpio_mode={}' for GPIO #{}: {:?}",
+                mode, id, err
+            );
+            return Err(err);
+        }
     }
+    Ok(())
 }
 
-// Consider returning result
-pub fn set_gpio_level(id: i32, level: &str, conn: &SqliteConnection) {
+pub fn set_gpio_level(
+    id: i32,
+    level: &str,
+    conn: &SqliteConnection,
+) -> Result<(), diesel::result::Error> {
     let target = gpio_state.filter(gpio_id.eq(id));
 
     let result = diesel::update(target)
@@ -125,11 +142,15 @@ pub fn set_gpio_level(id: i32, level: &str, conn: &SqliteConnection) {
                 warn! {"SQL statement 'gpio_level={}' for GPIO #{} affects {} rows", level, id, val};
             }
         }
-        Err(err) => error!(
-            "Failed to update 'gpio_level={}' for GPIO #{}: {:?}",
-            level, id, err
-        ),
+        Err(err) => {
+            error!(
+                "Failed to update 'gpio_level={}' for GPIO #{}: {:?}",
+                level, id, err
+            );
+            return Err(err);
+        }
     }
+    Ok(())
 }
 
 // TODO: Testing

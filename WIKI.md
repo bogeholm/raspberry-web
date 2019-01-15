@@ -5,7 +5,7 @@ Will only be set specifically for the GPIO pins used by the program
 ### Diesel setup
 1. diesel setup --database-url=db/raspberry-web.sqlite
 
-# To Do - General Functionality
+## To Do - General Functionality
 1. <s>Read GPIO list from `.env`</s>
 2. <s>Finish all db_setup</s>
 3. <s>`get_gpio_state()`</s>
@@ -17,40 +17,50 @@ Will only be set specifically for the GPIO pins used by the program
 9. <s>Add actix routes</s>
 10. <s>Check if Gpio is set to Outout before changing</s>
 11. <s>Return `Result<(), Error>` from more functions</s>
-12. Add Postman collection for documenation
 13. <s>Get list of gpio id's from DB</s>
 14. <s>Unify caps in database</s>
 15. <s>Split functionality into `main.rs` and `lib.rs`</s>
-16. Check GPIO also when checking status
+17. During setup, check that GPIOs where LEVEL, OUTPUT and MODE are set are also set to IN_USE
+18. <s>`setup.rs` + `utilities.rs`: return `Result` </s>
 
-# To Do - Adding `rppal` functionality
-- rpi.rs: <s>`get_gpio_mutex()`</s>
-- rpi.rs: <s>`set_gpio_level_rpi`</s>
-- app.rs: <s>`AppState`</s>
-- app.rs: <s>`create_app_state`</s>
-- lib.rs: <s>`server::new...`</s>
-- app.rs: <s>`pub fn set_gpio_level()`</s>
+## To Do - Adding `rppal` functionality
+- <s>rpi.rs: `get_gpio_mutex()`</s>
+- <s>rpi.rs: `set_gpio_level_rpi`</s>
+- <s>app.rs: `AppState`</s>
+- <s>app.rs: `create_app_state`</s>
+- <s>lib.rs: `server::new...`</s>
+- <s>app.rs: `pub fn set_gpio_level()`</s>
 - utilities.rs: `set_gpio_level`
 - <s>rename `db.rs` to `handlers.rs`</s>
 - <s>fix integration tests</s>
-- move everything with compilation configuration into rpi.rs (or folder)
 
-# DevOps
-- Dockerfile based on `rust:latest`
-- GitLab CI including build on ARM
 
-# To Do - Code Quality
-1. <s>Fix `schema.rs` -> `Nullable<Text>`</s>
-2. Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
-3. Better `actix` error types
-4. Refactor error messages
-5. Unit tests
-6. <s>Integration tests</s>
-7. Check responses in integration tests
+## To Do - Code Quality
+- <s>Fix `schema.rs` -> `Nullable<Text>`</s>
+- Refactor `Handler<GpioLevel> for DbExecutor` for functionality duplication
+- <s>Integration tests</s>
 
-# Publication to `crates.io`
+## Publication to `crates.io`
 - Read good guide
 - Rename to `raspberry-web`
 
-# Documentation
+# Version 0.2.x
+## Functionality
+- Check GPIO also when checking status
+
+## Documentation
 - Good `README.md`
+- Add Postman collection for documenation
+
+## DevOps
+- Dockerfile based on `rust:latest`
+- GitLab CI including build on ARM
+
+## Code quality
+- Better `actix` error types
+- Refactor error messages, don't use `InternalServerError` all over
+- Unit tests
+- Check responses in integration tests
+- Organize in directories
+- Consistent logging strategy
+- Move everything with compilation configuration into rpi.rs (or folder)
