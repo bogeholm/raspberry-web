@@ -18,6 +18,8 @@ mod utilities;
 
 use crate::app::AppState;
 use crate::handlers::DbExecutor;
+use crate::setup::{commit_variables_to_db, validate_setup};
+use crate::utilities::reset_table_gpio_state;
 use actix::SyncArbiter;
 use actix_web::server;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
@@ -45,19 +47,22 @@ pub fn setup_and_run() {
     let connection = pool.get().expect("Failed to acquire connection");
 
     // Reset database
-    utilities::reset_table_gpio_state(&connection).expect("Unable to update table 'gpio_state'");
+    reset_table_gpio_state(&connection).expect("Unable to update table 'gpio_state'");
 
     // Read these variables from .env
     let env_keys = vec![
         "GPIOS_IN_USE",
-        "GPIOS_MODE_OUTPUT", //"GPIOS_MODE_INPUT",
-        "GPIOS_LEVEL_LOW",   //"GPIOS_LEVEL_HIGH"
+        "GPIOS_MODE_OUTPUT",
+        "GPIOS_LEVEL_LOW",
+        "GPIOS_LEVEL_HIGH"
     ];
 
     // Parse env_keys, commit to database
     let parsed_variables = setup::read_env_to_hashmap(&env_keys);
-    // TODO: check consistency of HashMap
-    setup::commit_variables_to_db(&parsed_variables, &connection, gpio_arc_mutex.clone())
+    // Check consistency of HashMap
+    validate_setup(&parsed_variables).expect("Provided setup variables are inconsistent");
+    // If variables are consistent, setup Raspberry Pi and database
+    commit_variables_to_db(&parsed_variables, &connection, gpio_arc_mutex.clone())
         .expect("Error when setting up system");
 
     let sys = actix::System::new("raspberry-web");

@@ -53,7 +53,8 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
             Ok(read_str)
         }
         Err(err) => {
-            warn!("Could not read {}: {}", var_to_read, err);
+            // Should not be a warning - user can specify which variables to read
+            info!("Did not find {}: {}", var_to_read, err);
             Err(err)
         }
     }
@@ -78,8 +79,47 @@ pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str
     return parsed_variables;
 }
 
-pub fn _validate_setup(_map: &HashMap<&'static str, Vec<i32>>) -> Result<(), VarError> {
-    // Unimplemented
+pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error> {
+    // All GPIOs set to either 'high' or 'low' for 'gpio_level' must have 'in_use' = 1
+    // All GPIOs set to either 'high' or 'low' for 'gpio_level' must have 'gpio_mode' = 'output'
+    // GPIO's set to 'gpio_level' = 'low' must not be set to 'high' and vice versa
+    let levels = vec!["GPIOS_LEVEL_LOW", "GPIOS_LEVEL_HIGH"];
+
+    for level in levels.iter() {
+        if let Some(vec) = map.get(*level) {
+            // Must be present if levels are set
+            let in_use = map.get("GPIOS_IN_USE").ok_or(Error::new(ErrorKind::Other, 
+                "GPIO_LEVEL_* is set, but GPIOS_IN_USE is not set"))?;
+            
+            // Must be present if levels are set
+            let output = map.get("GPIOS_MODE_OUTPUT").ok_or(Error::new(ErrorKind::Other, 
+                "GPIO_LEVEL_* is set, but GPIOS_MODE_OUTPUT is not set"))?;
+            
+            for idx in vec.iter() {
+                if !in_use.contains(idx) {
+                    return Err(Error::new(ErrorKind::Other, 
+                    format!("GPIO #{} is not IN_USE, but {} is set for it", idx, *level)
+                ));}
+
+                if !output.contains(idx) {
+                    return Err(Error::new(ErrorKind::Other, 
+                    format!("GPIO #{} is not configured to OUTPUT, but {} is set for it", idx, *level)
+                ));}
+            }
+        }
+    }
+
+    if let Some(vec_low) = map.get("GPIOS_LEVEL_LOW") {
+        if let Some(vec_high) = map.get("GPIOS_LEVEL_HIGH") {
+            for id_low in vec_low.iter() {
+                if vec_high.contains(id_low) {
+                    return Err(Error::new(ErrorKind::Other, 
+                    format!("GPIO #{} is in both GPIOS_LEVEL_LOW and GPIOS_LEVEL_HIGH", id_low)));
+                }
+            }
+        }
+    }
+
     Ok(())
 }
 
