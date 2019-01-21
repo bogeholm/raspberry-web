@@ -51,8 +51,13 @@ pub fn set_gpio_level_rpi(
     let mut gpio = gpio_instance.get(gpio_num)?.into_output();
 
     match level {
-        "high" => gpio_instance.set_high(),
-        "low" => gpio_instance.set_low(),
+        "high" => {
+            info!("Set gpio #{} to 'high'", gpio_num);
+            gpio_instance.set_high()
+            },
+        "low" => {
+            info!("Set gpio #{} to 'low'", gpio_num);
+            gpio_instance.set_low()},
         _ => {
             return Err(Error::new(
                 ErrorKind::Other,
@@ -62,3 +67,15 @@ pub fn set_gpio_level_rpi(
     }
     Ok(())
 }
+/*
+ #[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn set_gpio_level_rpi_known_level() {
+        let res = set_gpio_level_rpi(1, "high", create_gpio_arc_mutex().unwrap());
+        
+    }
+}
+*/
