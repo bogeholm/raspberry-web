@@ -24,7 +24,12 @@ pub fn gpio_status_route(
         .from_err()
         .and_then(|res| match res {
             Ok(user) => Ok(HttpResponse::Ok().json(user)),
-            Err(_) => Ok(HttpResponse::InternalServerError().into()),
+            Err(err) => {
+                let err_string = err.to_string();
+                let mut response = HttpResponse::from_error(err);
+                response.set_body(err_string);
+                Ok(response)
+                },
         })
         .responder()
 }
@@ -68,7 +73,12 @@ pub fn set_gpio_level_route(
         .and_then(|res| future::result(res).from_err())
         .then(|res: Result<models::Gpio, Error>| match res {
             Ok(response) => Ok(HttpResponse::Ok().json(response)),
-            Err(err) => Ok(HttpResponse::InternalServerError().body(err.to_string())),
+            Err(err) => {
+                let err_string = err.to_string();
+                let mut response = HttpResponse::from_error(err);
+                response.set_body(err_string);
+                Ok(response)
+            },
         })
         .responder()
 }
