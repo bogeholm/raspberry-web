@@ -23,6 +23,6 @@ serde="^1.0.82"
 serde_derive="^1.0.82"
 serde_json="^1.0.33"
 
-[target.armv7-unknown-linux-gnueabihf.dependencies]
+[target.arm-unknown-linux-gnueabihf.dependencies]
 rppal = "0.9.0"
 
