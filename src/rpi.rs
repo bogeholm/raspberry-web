@@ -1,26 +1,26 @@
 use parking_lot::Mutex;
-#[cfg(target_arch = "armv7")]
+#[cfg(target_arch = "arm")]
 use rppal::gpio::{Error::InstanceExists, Gpio};
 use std::io::{Error, ErrorKind};
 use std::sync::Arc;
 
-#[cfg(not(target_arch = "armv7"))]
+#[cfg(not(target_arch = "arm"))]
 pub type GpioArcMutex = Arc<Mutex<i32>>;
 
-#[cfg(target_arch = "armv7")]
+#[cfg(target_arch = "arm")]
 pub type GpioArcMutex = Arc<Mutex<Gpio>>;
 
-#[cfg(not(target_arch = "armv7"))]
+#[cfg(not(target_arch = "arm"))]
 pub fn create_gpio_arc_mutex() -> Result<GpioArcMutex, String> {
     Ok(Arc::new(Mutex::new(0)))
 }
 
-#[cfg(target_arch = "armv7")]
+#[cfg(target_arch = "arm")]
 pub fn create_gpio_arc_mutex() -> Result<GpioArcMutex, InstanceExists> {
     Arc::new(Mutex::new(Gpio::new()))?
 }
 
-#[cfg(not(target_arch = "armv7"))]
+#[cfg(not(target_arch = "arm"))]
 pub fn set_gpio_level_rpi(
     _gpio_num: i32,
     level: &str,
@@ -40,7 +40,7 @@ pub fn set_gpio_level_rpi(
     Ok(())
 }
 
-#[cfg(target_arch = "armv7")]
+#[cfg(target_arch = "arm")]
 pub fn set_gpio_level_rpi(
     gpio_num: i32,
     level: &str,
