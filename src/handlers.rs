@@ -58,7 +58,7 @@ impl Handler<GpioId> for DbExecutor {
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
 
         gpio_vec.pop().ok_or({
-            error::ErrorInternalServerError(format!(
+            error::ErrorNotFound(format!(
                 "No result for GPIO #{} in database",
                 msg.gpio_id
             ))
@@ -84,7 +84,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?
             .pop()
             .ok_or({
-                error::ErrorInternalServerError(format!(
+                error::ErrorNotFound(format!(
                     "No result for GPIO #{} in database",
                     msg.gpio_id
                 ))
@@ -94,7 +94,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
         let bool_in_use = gpio_before.in_use == 1;
         if !bool_in_use {
             info!("GPIO #{} not in use.", msg.gpio_id);
-            return Err(error::ErrorInternalServerError(format!(
+            return Err(error::ErrorForbidden(format!(
                 "GPIO #{} not in use.",
                 msg.gpio_id
             )));
@@ -110,7 +110,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
                 msg.gpio_level, gpio_mode_before
             );
             info!("{}", message);
-            return Err(error::ErrorInternalServerError(message));
+            return Err(error::ErrorForbidden(message));
         }
 
         // 4. Check if desired level 'msg.gpio_level' is allowed
@@ -121,13 +121,13 @@ impl Handler<CheckGpioLevel> for DbExecutor {
         let allowed =
             state_map
                 .get::<str>(&desired_level)
-                .ok_or(error::ErrorInternalServerError(format!(
+                .ok_or(error::ErrorNotFound(format!(
                     "Could not find level '{}' in table 'allowed_states'",
                     desired_level
                 )))?;
         if !allowed {
             info!("Level '{}' is not allowed", desired_level);
-            Err(error::ErrorInternalServerError("State not allowed"))?
+            Err(error::ErrorForbidden("State not allowed"))?
         }
 
         Ok(gpio_before)

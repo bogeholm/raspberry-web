@@ -60,6 +60,7 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
     }
 }
 
+// TODO: Should return result with custom error
 pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str, Vec<i32>> {
     let delimiter = read_env_delimiter();
     let mut parsed_variables: HashMap<&'static str, Vec<i32>> = HashMap::new();
@@ -123,7 +124,7 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
     Ok(())
 }
 
-pub fn commit_variables_to_db(
+pub fn setup_rpi_and_db(
     map: &HashMap<&'static str, Vec<i32>>,
     conn: &SqliteConnection,
     gpio_arc_mutex: GpioArcMutex,

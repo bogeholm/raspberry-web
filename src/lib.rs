@@ -18,7 +18,7 @@ mod utilities;
 
 use crate::app::AppState;
 use crate::handlers::DbExecutor;
-use crate::setup::{commit_variables_to_db, validate_setup};
+use crate::setup::{read_env_to_hashmap, setup_rpi_and_db, validate_setup};
 use crate::utilities::reset_table_gpio_state;
 use actix::SyncArbiter;
 use actix_web::server;
@@ -57,12 +57,12 @@ pub fn setup_and_run() {
         "GPIOS_LEVEL_HIGH"
     ];
 
-    // Parse env_keys, commit to database
-    let parsed_variables = setup::read_env_to_hashmap(&env_keys);
+    // Parse env_keys. Hashmap will be empty if no keys are found
+    let parsed_variables = read_env_to_hashmap(&env_keys);
     // Check consistency of HashMap
     validate_setup(&parsed_variables).expect("Provided setup variables are inconsistent");
     // If variables are consistent, setup Raspberry Pi and database
-    commit_variables_to_db(&parsed_variables, &connection, gpio_arc_mutex.clone())
+    setup_rpi_and_db(&parsed_variables, &connection, gpio_arc_mutex.clone())
         .expect("Error when setting up system");
 
     let sys = actix::System::new("raspberry-web");
