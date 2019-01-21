@@ -58,8 +58,9 @@ impl Handler<GpioId> for DbExecutor {
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
 
         gpio_vec.pop().ok_or({
+            // GPIO not set up in database
             error::ErrorNotFound(format!(
-                "No result for GPIO #{} in database",
+                "raspberry-web has not been configured to work with GPIO #{}",
                 msg.gpio_id
             ))
         })
@@ -85,7 +86,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
             .pop()
             .ok_or({
                 error::ErrorNotFound(format!(
-                    "No result for GPIO #{} in database",
+                    "raspberry-web has not been configured to work with GPIO #{}",
                     msg.gpio_id
                 ))
             })?;
@@ -93,10 +94,9 @@ impl Handler<CheckGpioLevel> for DbExecutor {
         // 2. Check if the GPIO is in use
         let bool_in_use = gpio_before.in_use == 1;
         if !bool_in_use {
-            info!("GPIO #{} not in use.", msg.gpio_id);
+            info!("GPIO #{} is not in use.", msg.gpio_id);
             return Err(error::ErrorForbidden(format!(
-                "GPIO #{} not in use.",
-                msg.gpio_id
+                "GPIO #{} is not in use.", msg.gpio_id
             )));
         }
 
@@ -122,11 +122,11 @@ impl Handler<CheckGpioLevel> for DbExecutor {
             state_map
                 .get::<str>(&desired_level)
                 .ok_or(error::ErrorNotFound(format!(
-                    "Could not find level '{}' in table 'allowed_states'",
+                    "Level '{}' is not a recognized GPIO state'",
                     desired_level
                 )))?;
         if !allowed {
-            info!("Level '{}' is not allowed", desired_level);
+            info!("Level '{}' is not an allowed state for GPIO #{}", desired_level, msg.gpio_id);
             Err(error::ErrorForbidden("State not allowed"))?
         }
 

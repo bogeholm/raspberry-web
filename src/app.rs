@@ -95,5 +95,3 @@ pub fn create_app(app_state: AppState) -> App<AppState> {
             r.method(http::Method::GET).with(set_gpio_level_route)
         })
 }
-
-// TODO: Unit tests
