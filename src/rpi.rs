@@ -1,8 +1,9 @@
 use parking_lot::Mutex;
 #[cfg(target_arch = "arm")]
-use rppal::gpio::{Error::InstanceExists, Gpio};
+use rppal::gpio::{Error as rppalError, Gpio};
 use std::io::{Error, ErrorKind};
 use std::sync::Arc;
+use crate::utilities::i32_to_u8;
 
 #[cfg(not(target_arch = "arm"))]
 pub type GpioArcMutex = Arc<Mutex<i32>>;
@@ -16,16 +17,18 @@ pub fn create_gpio_arc_mutex() -> Result<GpioArcMutex, String> {
 }
 
 #[cfg(target_arch = "arm")]
-pub fn create_gpio_arc_mutex() -> Result<GpioArcMutex, InstanceExists> {
-    Arc::new(Mutex::new(Gpio::new()))?
+pub fn create_gpio_arc_mutex() -> Result<GpioArcMutex, rppalError> {
+    let gpio = Gpio::new()?;
+    Ok(Arc::new(Mutex::new(gpio)))
 }
 
 #[cfg(not(target_arch = "arm"))]
 pub fn set_gpio_level_rpi(
-    _gpio_num: i32,
+    gpio_id: i32,
     level: &str,
     gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), Error> {
+    let _gpio_id_u8 = i32_to_u8(gpio_id)?;
     let mut data = gpio_arc_mutex.lock();
     match level {
         "high" => *data += 1,
@@ -40,29 +43,38 @@ pub fn set_gpio_level_rpi(
     Ok(())
 }
 
+#[allow(unused_mut)] // output_pin needs mut but generates a warning
 #[cfg(target_arch = "arm")]
 pub fn set_gpio_level_rpi(
-    gpio_num: i32,
+    gpio_id: i32,
     level: &str,
     gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), Error> {
-    let gpio_instance = gpio_arc_mutex.lock();
-
-    let mut gpio = gpio_instance.get(gpio_num)?.into_output();
-
-    match level {
-        "high" => {
-            info!("Set gpio #{} to 'high'", gpio_num);
-            gpio_instance.set_high()
-            },
-        "low" => {
-            info!("Set gpio #{} to 'low'", gpio_num);
-            gpio_instance.set_low()},
-        _ => {
-            return Err(Error::new(
-                ErrorKind::Other,
-                format!("Invalid level: '{}'", level),
-            ))
+    let gpio_id_u8 = i32_to_u8(gpio_id)?;
+    let data = gpio_arc_mutex.lock();
+    
+    //let mut pin = (*data).get(gpio_num)?.into_output();
+    let mut pin_result = (*data).get(gpio_id_u8);
+    match pin_result {
+        Ok(pin) => {
+            let mut output_pin = pin.into_output();
+            match level {
+                "high" => {
+                    info!("Set gpio #{} to 'high'", gpio_id_u8);
+                    output_pin.set_high()
+                    },
+                "low" => {
+                    info!("Set gpio #{} to 'low'", gpio_id_u8);
+                    output_pin.set_low()},
+                _ => {
+                    return Err(Error::new(
+                    ErrorKind::Other,
+                    format!("Invalid level: '{}'", level),))
+                }
+            }
+        },
+            Err(err) => {
+                return Err(Error::new(ErrorKind::Other, err.to_string()))
         }
     }
     Ok(())

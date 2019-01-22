@@ -3,6 +3,9 @@ use crate::schema::gpio_state::dsl::*;
 use chrono::Local;
 use diesel::prelude::*;
 use std::collections::HashMap;
+use std::io::{Error, ErrorKind};
+use std::u8::{MIN, MAX};
+
 
 pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), diesel::result::Error> {
     info!("Resetting all fields in table 'gpio_state'...");
@@ -151,6 +154,18 @@ pub fn set_gpio_level_db(
         }
     }
     Ok(())
+}
+
+/// Convert x: i32 to u8 if MIN(u8)=0 x <= x <= MAX(u8)=255
+pub fn i32_to_u8(x: i32) -> Result<u8, Error> {
+    if MIN as i32 <= x && x <= MAX as i32 {
+        Ok(x as u8)
+    }
+    else{
+        Err(Error::new(ErrorKind::Other, 
+        format!("Not satisfied: {} <= {} <= {}", MIN, x, MAX)
+        ))
+    }
 }
 
 // TODO: Testing
