@@ -1,7 +1,7 @@
 # This file is a template, and might need editing before it works on your project.
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/rust/tags/
-image: "rust:latest"
+# image: "rust:latest"
 
 # Optional: Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
@@ -18,7 +18,17 @@ image: "rust:latest"
 #- apt-get install -yqq --no-install-recommends build-essential
 
 # Use cargo to test the project
-test:cargo:
+test:cargo_x86_64:
+  image: "rust:latest"
   script:
   - rustc --version && cargo --version              # Print version info for debugging
-  - cargo test --all --verbose -- --test-threads=1  # single threaded since we will use Gpio::new() in integration tests
+  - cargo test --all --verbose                      # Not single threaded since this is running on x86_64
+  #- cargo test --all --verbose -- --test-threads=1  # single threaded since we will use Gpio::new() in integration tests
+
+build:arm:
+  image: "rust:latest"
+  before_script:
+    - apt-get install -yqq build-essential gcc-arm-linux-gnueabihf libsqlite3-dev:armhf
+    - rustup target add armv7-unknown-linux-gnueabihf
+  script:
+    - RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc" cargo build --target=armv7-unknown-linux-gnueabihf
