@@ -1,44 +1,23 @@
 # https://github.com/rust-lang/docker-rust/blob/1d112bc218d6b7a5479a05fa652130d8e086564f/1.31.1/stretch/Dockerfile
 # From: https://docs.docker.com/samples/library/rust/#start-a-rust-instance-running-your-app
-FROM buildpack-deps:stretch
+FROM rust:latest
 
-RUN dpkg --add-architecture armhf
-RUN apt-get update
-RUN apt-get install -qq \
-    wget \
+RUN dpkg --add-architecture armhf \
+    && apt-get update \
+    && apt-get install -yqq \
     build-essential \
     gcc-arm-linux-gnueabihf \
     libsqlite3-dev:armhf
-    
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.31.1
 
-RUN set -eux; \
-    dpkgArch="$(dpkg --print-architecture)"; \
-    case "${dpkgArch##*-}" in \
-        amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='2d4ddf4e53915a23dda722608ed24e5c3f29ea1688da55aa4e98765fc6223f71' ;; \
-        armhf) rustArch='armv7-unknown-linux-gnueabihf'; rustupSha256='be85f50dc70ee239c5bb6acb60080797841a1e7c45fbf6bae15d6bd4b37ce0e5' ;; \
-        arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='454f00a86be75ab070149bac1f541a7b39e5d3383d6da96ad2b929867ed40167' ;; \
-        i386) rustArch='i686-unknown-linux-gnu'; rustupSha256='179e3b39f11037a708874e750081f7c0d3e1a6a4c431c2ecee2295acc7b696af' ;; \
-        *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
-    esac; \
-    url="https://static.rust-lang.org/rustup/archive/1.16.0/${rustArch}/rustup-init"; \
-    wget "$url"; \
-    echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
-    chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --default-toolchain $RUST_VERSION; \
-    rm rustup-init; \
-    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
-    rustup --version; \
-    cargo --version; \
-    rustc --version; \
-    # Add RPi as target
-    rustup target add armv7-unknown-linux-gnueabihf
+# Add RPi (ARM) as target
+RUN rustup target add armv7-unknown-linux-gnueabihf
 
+# Print stacktrace on error
+# https://github.com/rust-lang/rust/pull/38165
 RUN export RUST_BACKTRACE=1
+
 WORKDIR /app
+
 ENTRYPOINT RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc" \
     cargo build --target=armv7-unknown-linux-gnueabihf
 
