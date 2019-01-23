@@ -1,29 +1,19 @@
-# This file is a template, and might need editing before it works on your project.
+# https://docs.gitlab.com/ee/ci/yaml/#before_script-and-after_script
+# https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#define-image-and-services-from-gitlab-ciyml
+
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/rust/tags/
 # image: "rust:latest"
 
-# Optional: Pick zero or more services to be used on all builds.
-# Only needed when using a docker container to run your tests in.
-# Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
-#services:
-#  - mysql:latest
-#  - redis:latest
-#  - postgres:latest
-
-# Optional: Install a C compiler, cmake and git into the container.
-# You will often need this when you (or any of your dependencies) depends on C code.
-#before_script:
-#- apt-get update -yqq
-#- apt-get install -yqq --no-install-recommends build-essential
-
-# Use cargo to test the project
-test:cargo_x86_64:
+# Run tests with cargo
+# single threaded version of running tests
+#- cargo test --all --verbose -- --test-threads=1  
+test:x86_64:
   image: "rust:latest"
   script:
-  - rustc --version && cargo --version              # Print version info for debugging
-  - cargo test --all --verbose                      # Not single threaded since this is running on x86_64
-  #- cargo test --all --verbose -- --test-threads=1  # single threaded since we will use Gpio::new() in integration tests
+  - rustc --version && cargo --version # Print version info for debugging
+  - cargo test --all --verbose  # Not single threaded since this is running on x86_64
+  
 
 build:arm:
   image: "rust:latest"
