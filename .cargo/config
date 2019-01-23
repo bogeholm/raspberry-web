@@ -1,2 +1,2 @@
-[target.armv7-unknown-linux-gnueabihf]
+[target.'cfg(target_arch = "arm")']
 linker = "arm-linux-gnueabihf-gcc"
