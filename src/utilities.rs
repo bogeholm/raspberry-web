@@ -170,3 +170,26 @@ pub fn i32_to_u8(x: i32) -> Result<u8, Error> {
 
 // TODO: Testing
 // https://github.com/diesel-rs/diesel/blob/master/diesel_tests/tests/select.rs
+
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    pub fn below_u8_min_must_fail () {
+        assert!(i32_to_u8(MIN as i32 - 1).is_err())
+    }
+
+    #[test]
+    pub fn above_u8_max_must_fail () {
+        assert!(i32_to_u8(MAX as i32 + 1).is_err())
+    }
+
+    #[test]
+    pub fn within_range_must_succeed () {
+        let xi32: i32 = 17;
+        let resu8 = i32_to_u8(xi32).unwrap();
+        assert_eq!(xi32 as u8, resu8);
+    }
+}
