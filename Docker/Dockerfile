@@ -16,8 +16,13 @@ RUN rustup target add armv7-unknown-linux-gnueabihf
 # https://github.com/rust-lang/rust/pull/38165
 RUN export RUST_BACKTRACE=1
 
+# Specify working directory.
+# You should ind mount crate root on host to this directory
 WORKDIR /app
 
+# Using
+# RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc"
+# since specifying linker in .cargo/config proved challenging
 ENTRYPOINT RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc" \
     cargo build --target=armv7-unknown-linux-gnueabihf
 

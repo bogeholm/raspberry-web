@@ -53,6 +53,7 @@ pub fn setup_and_run() {
     let env_keys = vec![
         "GPIOS_IN_USE",
         "GPIOS_MODE_OUTPUT",
+        "GPIOS_MODE_INOUT",
         "GPIOS_LEVEL_LOW",
         "GPIOS_LEVEL_HIGH"
     ];

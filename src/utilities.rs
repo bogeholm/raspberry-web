@@ -173,7 +173,7 @@ pub fn i32_to_u8(x: i32) -> Result<u8, Error> {
 
 
 #[cfg(test)]
-mod tests{
+mod tests {
     use super::*;
 
     #[test]
