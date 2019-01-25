@@ -144,10 +144,24 @@ pub fn setup_rpi_and_db(
     Ok(())
 }
 
-/*
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    #[test]
+    fn delimiter_set_semicolon() {
+        env::set_var("DELIMITER", ";");
+        let res = read_env_delimiter();
+
+        assert_eq!(";", res);
+    }
+
+    #[test]
+    fn delimiter_not_set_must_return_comma() {
+        env::remove_var("DELIMITER");
+        let res = read_env_delimiter();
+
+        assert_eq!(",", res);
+    }
+
 }
-*/

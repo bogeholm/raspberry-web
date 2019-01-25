@@ -85,5 +85,5 @@ pub fn setup_and_run() {
     .expect(&format!("Can not bind to {}", &ip_port))
     .start();
 
-    let _ = sys.run();
+    let _sys = sys.run();
 }
