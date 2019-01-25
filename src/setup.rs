@@ -90,23 +90,34 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
     for level in levels.iter() {
         if let Some(vec) = map.get(*level) {
             // Must be present if levels are set
-            let in_use = map.get("GPIOS_IN_USE").ok_or(Error::new(ErrorKind::Other, 
-                "GPIO_LEVEL_* is set, but GPIOS_IN_USE is not set"))?;
-            
+            let in_use = map.get("GPIOS_IN_USE").ok_or(Error::new(
+                ErrorKind::Other,
+                "GPIO_LEVEL_* is set, but GPIOS_IN_USE is not set",
+            ))?;
+
             // Must be present if levels are set
-            let output = map.get("GPIOS_MODE_OUTPUT").ok_or(Error::new(ErrorKind::Other, 
-                "GPIO_LEVEL_* is set, but GPIOS_MODE_OUTPUT is not set"))?;
-            
+            let output = map.get("GPIOS_MODE_OUTPUT").ok_or(Error::new(
+                ErrorKind::Other,
+                "GPIO_LEVEL_* is set, but GPIOS_MODE_OUTPUT is not set",
+            ))?;
+
             for idx in vec.iter() {
                 if !in_use.contains(idx) {
-                    return Err(Error::new(ErrorKind::Other, 
-                    format!("GPIO #{} is not IN_USE, but {} is set for it", idx, *level)
-                ));}
+                    return Err(Error::new(
+                        ErrorKind::Other,
+                        format!("GPIO #{} is not IN_USE, but {} is set for it", idx, *level),
+                    ));
+                }
 
                 if !output.contains(idx) {
-                    return Err(Error::new(ErrorKind::Other, 
-                    format!("GPIO #{} is not configured to OUTPUT, but {} is set for it", idx, *level)
-                ));}
+                    return Err(Error::new(
+                        ErrorKind::Other,
+                        format!(
+                            "GPIO #{} is not configured to OUTPUT, but {} is set for it",
+                            idx, *level
+                        ),
+                    ));
+                }
             }
         }
     }
@@ -115,8 +126,13 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
         if let Some(vec_high) = map.get("GPIOS_LEVEL_HIGH") {
             for id_low in vec_low.iter() {
                 if vec_high.contains(id_low) {
-                    return Err(Error::new(ErrorKind::Other, 
-                    format!("GPIO #{} is in both GPIOS_LEVEL_LOW and GPIOS_LEVEL_HIGH", id_low)));
+                    return Err(Error::new(
+                        ErrorKind::Other,
+                        format!(
+                            "GPIO #{} is in both GPIOS_LEVEL_LOW and GPIOS_LEVEL_HIGH",
+                            id_low
+                        ),
+                    ));
                 }
             }
         }
@@ -126,8 +142,13 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
         if let Some(vec_output) = map.get("GPIOS_MODE_OUTPUT") {
             for id_low in vec_input.iter() {
                 if vec_output.contains(id_low) {
-                    return Err(Error::new(ErrorKind::Other, 
-                    format!("GPIO #{} is in both GPIOS_MODE_INPUT and GPIOS_MODE_OUTPUT", id_low)));
+                    return Err(Error::new(
+                        ErrorKind::Other,
+                        format!(
+                            "GPIO #{} is in both GPIOS_MODE_INPUT and GPIOS_MODE_OUTPUT",
+                            id_low
+                        ),
+                    ));
                 }
             }
         }
@@ -210,7 +231,7 @@ mod tests {
         // Insert only level and mode, not IN_USE
         map.insert("GPIOS_MODE_OUTPUT", vec![1, 2]);
         map.insert("GPIOS_LEVEL_LOW", vec![1, 2]);
-        
+
         let res = validate_setup(&map);
         assert!(res.is_err());
     }
@@ -220,7 +241,7 @@ mod tests {
         let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();
         map.insert("GPIOS_IN_USE", vec![1, 2]);
         map.insert("GPIOS_LEVEL_HIGH", vec![1, 2]);
-        
+
         let res = validate_setup(&map);
         assert!(res.is_err());
     }
@@ -258,7 +279,7 @@ mod tests {
         let res = validate_setup(&map);
         assert!(res.is_err());
     }
-    
+
     #[test]
     fn same_pin_input_and_output_must_fail() {
         let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();

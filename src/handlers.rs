@@ -96,7 +96,8 @@ impl Handler<CheckGpioLevel> for DbExecutor {
         if !bool_in_use {
             info!("GPIO #{} is not in use.", msg.gpio_id);
             return Err(error::ErrorForbidden(format!(
-                "GPIO #{} is not in use.", msg.gpio_id
+                "GPIO #{} is not in use.",
+                msg.gpio_id
             )));
         }
 
@@ -118,15 +119,17 @@ impl Handler<CheckGpioLevel> for DbExecutor {
         let state_map = get_allowed_states(connection, "level")
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
 
-        let allowed =
-            state_map
-                .get::<str>(&desired_level)
-                .ok_or(error::ErrorNotFound(format!(
-                    "Level '{}' is not a recognized GPIO state'",
-                    desired_level
-                )))?;
+        let allowed = state_map
+            .get::<str>(&desired_level)
+            .ok_or(error::ErrorNotFound(format!(
+                "Level '{}' is not a recognized GPIO state'",
+                desired_level
+            )))?;
         if !allowed {
-            info!("Level '{}' is not an allowed state for GPIO #{}", desired_level, msg.gpio_id);
+            info!(
+                "Level '{}' is not an allowed state for GPIO #{}",
+                desired_level, msg.gpio_id
+            );
             Err(error::ErrorForbidden("State not allowed"))?
         }
 

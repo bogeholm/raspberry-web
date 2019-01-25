@@ -29,7 +29,7 @@ pub fn gpio_status_route(
                 let mut response = HttpResponse::from_error(err);
                 response.set_body(err_string);
                 Ok(response)
-                },
+            }
         })
         .responder()
 }
@@ -78,7 +78,7 @@ pub fn set_gpio_level_route(
                 let mut response = HttpResponse::from_error(err);
                 response.set_body(err_string);
                 Ok(response)
-            },
+            }
         })
         .responder()
 }

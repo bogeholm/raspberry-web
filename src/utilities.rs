@@ -4,8 +4,7 @@ use chrono::Local;
 use diesel::prelude::*;
 use std::collections::HashMap;
 use std::io::{Error, ErrorKind};
-use std::u8::{MIN, MAX};
-
+use std::u8::{MAX, MIN};
 
 pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), diesel::result::Error> {
     info!("Resetting all fields in table 'gpio_state'...");
@@ -160,34 +159,30 @@ pub fn set_gpio_level_db(
 pub fn i32_to_u8(x: i32) -> Result<u8, Error> {
     if MIN as i32 <= x && x <= MAX as i32 {
         Ok(x as u8)
-    }
-    else{
-        Err(Error::new(ErrorKind::Other, 
-        format!("Not satisfied: {} <= {} <= {}", MIN, x, MAX)
+    } else {
+        Err(Error::new(
+            ErrorKind::Other,
+            format!("Not satisfied: {} <= {} <= {}", MIN, x, MAX),
         ))
     }
 }
-
-// TODO: Testing
-// https://github.com/diesel-rs/diesel/blob/master/diesel_tests/tests/select.rs
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    pub fn below_u8_min_must_fail () {
+    pub fn below_u8_min_must_fail() {
         assert!(i32_to_u8(MIN as i32 - 1).is_err())
     }
 
     #[test]
-    pub fn above_u8_max_must_fail () {
+    pub fn above_u8_max_must_fail() {
         assert!(i32_to_u8(MAX as i32 + 1).is_err())
     }
 
     #[test]
-    pub fn within_range_must_succeed () {
+    pub fn within_range_must_succeed() {
         let xi32: i32 = 17;
         let resu8 = i32_to_u8(xi32).unwrap();
         assert_eq!(xi32 as u8, resu8);

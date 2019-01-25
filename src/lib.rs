@@ -55,7 +55,7 @@ pub fn setup_and_run() {
         "GPIOS_MODE_OUTPUT",
         "GPIOS_MODE_INOUT",
         "GPIOS_LEVEL_LOW",
-        "GPIOS_LEVEL_HIGH"
+        "GPIOS_LEVEL_HIGH",
     ];
 
     // Parse env_keys. Hashmap will be empty if no keys are found

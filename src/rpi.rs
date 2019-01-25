@@ -1,9 +1,9 @@
+use crate::utilities::i32_to_u8;
 use parking_lot::Mutex;
 #[cfg(target_arch = "arm")]
 use rppal::gpio::{Error as rppalError, Gpio};
 use std::io::{Error, ErrorKind};
 use std::sync::Arc;
-use crate::utilities::i32_to_u8;
 
 #[cfg(not(target_arch = "arm"))]
 pub type GpioArcMutex = Arc<Mutex<i32>>;
@@ -37,7 +37,7 @@ pub fn set_gpio_level_rpi(
             return Err(Error::new(
                 ErrorKind::Other,
                 format!("Invalid level: '{}'", level),
-            ))
+            ));
         }
     }
     Ok(())
@@ -52,7 +52,7 @@ pub fn set_gpio_level_rpi(
 ) -> Result<(), Error> {
     let gpio_id_u8 = i32_to_u8(gpio_id)?;
     let data = gpio_arc_mutex.lock();
-    
+
     //let mut pin = (*data).get(gpio_num)?.into_output();
     let mut pin_result = (*data).get(gpio_id_u8);
     match pin_result {
@@ -62,32 +62,49 @@ pub fn set_gpio_level_rpi(
                 "high" => {
                     info!("Set gpio #{} to 'high'", gpio_id_u8);
                     output_pin.set_high()
-                    },
+                }
                 "low" => {
                     info!("Set gpio #{} to 'low'", gpio_id_u8);
-                    output_pin.set_low()},
+                    output_pin.set_low()
+                }
                 _ => {
                     return Err(Error::new(
-                    ErrorKind::Other,
-                    format!("Invalid level: '{}'", level),))
+                        ErrorKind::Other,
+                        format!("Invalid level: '{}'", level),
+                    ));
                 }
             }
-        },
-            Err(err) => {
-                return Err(Error::new(ErrorKind::Other, err.to_string()))
         }
+        Err(err) => return Err(Error::new(ErrorKind::Other, err.to_string())),
     }
     Ok(())
 }
-/*
- #[cfg(test)]
-mod tests{
+
+#[cfg(test)]
+mod tests {
     use super::*;
 
     #[test]
-    fn set_gpio_level_rpi_known_level() {
-        let res = set_gpio_level_rpi(1, "high", create_gpio_arc_mutex().unwrap());
-        
+    fn set_gpio_level_rpi_high_must_succeed() {
+        let gpio_arc_mutex = create_gpio_arc_mutex().expect("Could not acquire GPIO");
+        let res = set_gpio_level_rpi(1, "high", gpio_arc_mutex);
+
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn set_gpio_level_rpi_low_must_succeed() {
+        let gpio_arc_mutex = create_gpio_arc_mutex().expect("Could not acquire GPIO");
+        let res = set_gpio_level_rpi(1, "low", gpio_arc_mutex);
+
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn set_gpio_level_rpi_unknown_must_fail() {
+        let gpio_arc_mutex = create_gpio_arc_mutex().expect("Could not acquire GPIO");
+        let res = set_gpio_level_rpi(1, "unknown_level", gpio_arc_mutex);
+
+        assert!(res.is_err());
     }
 }
-*/

@@ -70,7 +70,6 @@ fn setup_db_for_tests(connection: &SqliteConnection) -> Result<(), diesel::resul
 
 // Did not work, for a reason:
 // let test_server = TestServer::with_factory(move || app::create_app(addr.clone()));
-// TODO: Build testserver with state AND factory
 
 /// Build test server with state, setup db for tests and return testserver
 fn get_testserver_with_state() -> TestServer {
