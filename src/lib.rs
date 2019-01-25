@@ -38,9 +38,6 @@ pub fn setup_and_run() {
     // Initialize logger
     env_logger::init();
 
-    // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other arcs
-    let gpio_arc_mutex = rpi::create_gpio_arc_mutex().expect("Could not acquire GPIO");
-
     // Create database connection pool
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
     let pool = r2d2::Pool::builder()
@@ -62,8 +59,12 @@ pub fn setup_and_run() {
 
     // Parse env_keys. Hashmap will be empty if no keys are found
     let parsed_variables = read_env_to_hashmap(&env_keys);
-    // Check consistency of HashMap
+    // Check consistency of parsed_variables
     validate_setup(&parsed_variables).expect("Provided setup variables are inconsistent");
+
+    // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other arcs
+    let gpio_arc_mutex = rpi::create_gpio_arc_mutex().expect("Could not acquire GPIO");
+
     // If variables are consistent, setup Raspberry Pi and database
     setup_rpi_and_db(&parsed_variables, &connection, gpio_arc_mutex.clone())
         .expect("Error when setting up system");
