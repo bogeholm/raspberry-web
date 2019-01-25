@@ -15,11 +15,13 @@ pub mod rpi;
 pub mod schema;
 mod setup;
 mod utilities;
+pub mod validation;
 
 use crate::app::AppState;
 use crate::handlers::DbExecutor;
-use crate::setup::{read_env_to_hashmap, setup_rpi_and_db, validate_setup};
+use crate::setup::{read_env_to_hashmap, setup_rpi_and_db};
 use crate::utilities::reset_table_gpio_state;
+use crate::validation::validate_setup;
 use actix::SyncArbiter;
 use actix_web::server;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
