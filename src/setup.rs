@@ -164,4 +164,44 @@ mod tests {
         assert_eq!(",", res);
     }
 
+    #[test]
+    fn parse_valid_string_comma_separated_to_vec_must_succeed() {
+        let str_to_parse = "1,2";
+        let delimiter = ",";
+        let res = parse_string_to_vec(delimiter, str_to_parse);
+        let expected = vec![1, 2];
+
+        assert!(res.is_ok());
+        assert_eq!(res.expect("Test failed"), expected);
+    }
+
+    #[test]
+    fn parse_valid_string_semicolon_separated_to_vec_must_succeed() {
+        let str_to_parse = "1;2";
+        let delimiter = ";";
+        let res = parse_string_to_vec(delimiter, str_to_parse);
+        let expected = vec![1, 2];
+
+        assert!(res.is_ok());
+        assert_eq!(res.expect("Test failed"), expected);
+    }
+
+    #[test]
+    fn parse_invalid_string_contains_letter_to_vec_must_fail() {
+        let str_to_parse = "1,a";
+        let delimiter = ",";
+        let res = parse_string_to_vec(delimiter, str_to_parse);
+
+        assert!(res.is_err());
+    }
+
+    #[test]
+    fn parse_invalid_string_contains_float_to_vec_must_fail() {
+        let str_to_parse = "1,2.3";
+        let delimiter = ",";
+        let res = parse_string_to_vec(delimiter, str_to_parse);
+
+        assert!(res.is_err());
+    }
+
 }
