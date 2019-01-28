@@ -204,4 +204,24 @@ mod tests {
         assert!(res.is_err());
     }
 
+    #[test]
+    fn read_existing_env_var_must_succeed() {
+        let key = "TEST";
+        let val = "test-variable";
+        env::set_var(key, val);
+        let res = read_env_to_str(key);
+
+        assert!(res.is_ok());
+        assert_eq!(res.expect("Test failed"), val.to_string());
+    }
+
+    #[test]
+    fn read_non_existing_env_var_must_fail() {
+        let key = "TEST";
+        env::remove_var(key);
+        let res = read_env_to_str(key);
+
+        assert!(res.is_err());
+    }
+
 }
