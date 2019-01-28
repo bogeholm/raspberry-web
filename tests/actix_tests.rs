@@ -1,6 +1,5 @@
 #[macro_use]
 extern crate diesel_migrations;
-#[macro_use]
 extern crate log;
 extern crate raspberry_web;
 
@@ -107,7 +106,7 @@ fn get_testserver_with_state() -> TestServer {
 #[test]
 fn test_migrations() {
     let pool = get_pool_after_migrations();
-    assert_eq!(pool.is_ok(), true)
+    assert!(pool.is_ok())
 }
 
 #[test]
@@ -121,7 +120,6 @@ fn check_status_succes() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert!(response.status().is_success())
@@ -138,11 +136,9 @@ fn check_status_gpio_nonexistant_failure() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert_eq!(response.status().is_success(), false)
-    //assert_eq!(1, 1)
 }
 
 #[test]
@@ -156,7 +152,6 @@ fn set_gpio_level_success() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert!(response.status().is_success())
@@ -173,7 +168,6 @@ fn set_gpio_level_gpio_nonexistant_failure() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert_eq!(response.status().is_success(), false)
@@ -190,7 +184,6 @@ fn set_gpio_level_gpio_not_in_use_failure() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert_eq!(response.status().is_success(), false)
@@ -207,7 +200,6 @@ fn set_gpio_level_gpio_mode_not_output_failure() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert_eq!(response.status().is_success(), false)
@@ -224,7 +216,6 @@ fn set_gpio_level_unknown_level_failure() {
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
-    info!("{:?}", response);
 
     // then
     assert_eq!(response.status().is_success(), false)
