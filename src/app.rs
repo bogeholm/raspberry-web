@@ -91,7 +91,7 @@ pub fn create_app(app_state: AppState) -> App<AppState> {
         .resource("/status/{id}", |r| {
             r.method(http::Method::GET).with(gpio_status_route)
         })
-        .resource("/set_level/{id}/{level}", |r| {
+        .resource("/set/level/{id}/{level}", |r| {
             r.method(http::Method::GET).with(set_gpio_level_route)
         })
 }

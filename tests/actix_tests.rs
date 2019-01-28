@@ -96,7 +96,7 @@ fn get_testserver_with_state() -> TestServer {
         app.resource("/status/{id}", |r| {
             r.method(http::Method::GET).with(gpio_status_route)
         })
-        .resource("/set_level/{id}/{level}", |r| {
+        .resource("/set/level/{id}/{level}", |r| {
             r.method(http::Method::GET).with(set_gpio_level_route)
         });
     });
@@ -138,7 +138,7 @@ fn check_status_gpio_nonexistant_failure() {
     let response = test_server.execute(request.send()).unwrap();
 
     // then
-    assert_eq!(response.status().is_success(), false)
+    assert_eq!(response.status(), http::StatusCode::NOT_FOUND)
 }
 
 #[test]
@@ -148,7 +148,7 @@ fn set_gpio_level_success() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/set_level/1/high")
+        .client(http::Method::GET, "/set/level/1/high")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
@@ -164,13 +164,13 @@ fn set_gpio_level_gpio_nonexistant_failure() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/set_level/18/high")
+        .client(http::Method::GET, "/set/level/18/high")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
 
     // then
-    assert_eq!(response.status().is_success(), false)
+    assert_eq!(response.status(), http::StatusCode::NOT_FOUND)
 }
 
 #[test]
@@ -180,13 +180,13 @@ fn set_gpio_level_gpio_not_in_use_failure() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/set_level/2/high")
+        .client(http::Method::GET, "/set/level/2/high")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
 
     // then
-    assert_eq!(response.status().is_success(), false)
+    assert_eq!(response.status(), http::StatusCode::FORBIDDEN)
 }
 
 #[test]
@@ -196,13 +196,13 @@ fn set_gpio_level_gpio_mode_not_output_failure() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/set_level/3/high")
+        .client(http::Method::GET, "/set/level/3/high")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
 
     // then
-    assert_eq!(response.status().is_success(), false)
+    assert_eq!(response.status(), http::StatusCode::FORBIDDEN)
 }
 
 #[test]
@@ -212,11 +212,11 @@ fn set_gpio_level_unknown_level_failure() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/set_level/1/something_random")
+        .client(http::Method::GET, "/set/level/1/something_random")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
 
     // then
-    assert_eq!(response.status().is_success(), false)
+    assert_eq!(response.status(), http::StatusCode::NOT_FOUND)
 }
