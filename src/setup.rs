@@ -60,7 +60,6 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
     }
 }
 
-// TODO: Should return result with custom error
 pub fn read_env_to_hashmap(env_keys: &Vec<&'static str>) -> HashMap<&'static str, Vec<i32>> {
     let delimiter = read_env_delimiter();
     let mut parsed_variables: HashMap<&'static str, Vec<i32>> = HashMap::new();
@@ -147,6 +146,9 @@ pub fn setup_rpi_and_db(
 #[cfg(test)]
 mod tests {
     use super::*;
+    // If tests fail when run in parallel, and the error is not consistently reproducible,
+    // it may be due to a race condition when setting DELIMITER to both "," and ";" in
+    // different tests below. In that case, run in serial or remove conflicting tests
 
     #[test]
     fn delimiter_set_semicolon() {
@@ -206,7 +208,7 @@ mod tests {
 
     #[test]
     fn read_existing_env_var_must_succeed() {
-        let key = "TEST";
+        let key = "test-succeeds";
         let val = "test-variable";
         env::set_var(key, val);
         let res = read_env_to_str(key);
@@ -217,11 +219,69 @@ mod tests {
 
     #[test]
     fn read_non_existing_env_var_must_fail() {
-        let key = "TEST";
+        let key = "test-fails";
         env::remove_var(key);
         let res = read_env_to_str(key);
 
         assert!(res.is_err());
     }
 
+    /// Compare two &Vec<i32>'s for elementwise equality
+    fn i32vecs_equal(u: &Vec<i32>, v: &Vec<i32>) -> bool {
+        //https://stackoverflow.com/questions/40767815
+        (u.len() == v.len()) && u.iter().zip(v).all(|(a, b)| a == b)
+    }
+
+    #[test]
+    fn read_env_to_hashmap_must_match_expected() {
+        //let mut expected: HashMap<&'static str, Vec<i32>> = HashMap::new();
+        // environment keys
+        let key1 = "first_match";
+        let key2 = "second_match";
+        // environment values for env
+        let env_val1 = "1,2";
+        let env_val2 = "3,4";
+        // expected values
+        let exp_val1 = vec![1, 2];
+        let exp_val2 = vec![3, 4];
+
+        // keys to be read from env
+        let read_vec: Vec<&'static str> = vec![key2, key1];
+
+        // set up environment variables
+        env::set_var("DELIMITER", ",");
+        env::set_var(key1, env_val1);
+        env::set_var(key2, env_val2);
+
+        let res_map = read_env_to_hashmap(&read_vec);
+        let res_val1 = res_map.get(key1).expect("Test failed");
+        let res_val2 = res_map.get(key2).expect("Test failed");
+
+        assert!(i32vecs_equal(&exp_val1, res_val1));
+        assert!(i32vecs_equal(&exp_val2, res_val2));
+    }
+
+    #[test]
+    fn read_env_to_hashmap_bad_values_must_fail() {
+        //let mut expected: HashMap<&'static str, Vec<i32>> = HashMap::new();
+        // environment keys
+        let key1 = "first_none";
+        let key2 = "second_none";
+        // environment values for env
+        let env_val1 = "1,2.0";
+        let env_val2 = "3,a";
+
+        // keys to be read from env
+        let read_vec: Vec<&'static str> = vec![key2, key1];
+
+        // set up environment variables
+        env::set_var("DELIMITER", ",");
+        env::set_var(key1, env_val1);
+        env::set_var(key2, env_val2);
+
+        let res_map = read_env_to_hashmap(&read_vec);
+
+        assert!(res_map.get(key1).is_none());
+        assert!(res_map.get(key2).is_none());
+    }
 }
