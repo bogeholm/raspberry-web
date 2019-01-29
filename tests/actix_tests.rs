@@ -18,7 +18,6 @@ use raspberry_web::rpi::create_gpio_arc_mutex;
 use raspberry_web::schema;
 
 embed_migrations!("migrations");
-
 static INIT: Once = ONCE_INIT;
 
 /// Initialize logging only once
@@ -101,12 +100,6 @@ fn get_testserver_with_state() -> TestServer {
         });
     });
     test_server
-}
-
-#[test]
-fn test_migrations() {
-    let pool = get_pool_after_migrations();
-    assert!(pool.is_ok())
 }
 
 #[test]
