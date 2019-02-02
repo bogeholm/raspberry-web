@@ -10,10 +10,10 @@ extern crate serde_derive;
 
 pub mod app;
 pub mod handlers;
-mod models;
+pub mod models;
 pub mod rpi;
 pub mod schema;
-mod setup;
+pub mod setup;
 pub mod utilities;
 pub mod validation;
 

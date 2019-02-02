@@ -2,9 +2,12 @@
 extern crate diesel_migrations;
 extern crate raspberry_web;
 
+use diesel::prelude::*;
 use diesel::{r2d2::ConnectionManager, r2d2::Pool, SqliteConnection};
 use diesel_migrations::RunMigrationsError;
-use raspberry_web::utilities::get_allowed_states;
+use raspberry_web::models;
+use raspberry_web::schema;
+use raspberry_web::utilities::{get_allowed_states, reset_table_gpio_state};
 
 embed_migrations!("migrations");
 
@@ -66,4 +69,40 @@ fn get_allowed_levels_must_succeed() {
     assert_eq!(low, &true);
     assert_eq!(input, &false);
     assert_eq!(output, &false);
+}
+
+#[test]
+fn reset_table_gpio_state_after_update_must_succeed() {
+    use crate::schema::gpio_state::dsl::*;
+    let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
+    let connection = pool.get().expect("Failed to acquire connection");
+
+    // Variables
+    let gpio_changed = 1;
+    let mode = "output";
+    let level = "low";
+
+    // Change
+    let _ = diesel::update(gpio_state)
+        .set((in_use.eq(1), gpio_mode.eq(mode), gpio_level.eq(level)))
+        .filter(gpio_id.eq(gpio_changed))
+        .execute(&connection)
+        .expect("Test failed");
+
+    // Reset
+    reset_table_gpio_state(&connection).expect("Test failed");
+
+    // Check
+    let gpio_reset = gpio_state
+        .filter(gpio_id.eq(gpio_id))
+        .load::<models::Gpio>(&connection)
+        .expect("Test failed")
+        .pop()
+        .expect("Test failed");
+
+    println!("{:?}", gpio_reset);
+
+    assert_eq!(gpio_reset.in_use, 0);
+    assert_eq!(gpio_reset.gpio_mode, Some("".to_string()));
+    assert_eq!(gpio_reset.gpio_level, Some("".to_string()));
 }
