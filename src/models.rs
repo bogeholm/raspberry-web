@@ -27,7 +27,7 @@ impl AllowedStates {
     pub fn to_hashmap(&self) -> HashMap<&'static str, bool> {
         let mut hashed: HashMap<&'static str, bool> = HashMap::new();
         hashed.insert("input", self.input == 1);
-        hashed.insert("outut", self.output == 1);
+        hashed.insert("output", self.output == 1);
         hashed.insert("high", self.high == 1);
         hashed.insert("low", self.low == 1);
         hashed

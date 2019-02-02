@@ -14,7 +14,7 @@ mod models;
 pub mod rpi;
 pub mod schema;
 mod setup;
-mod utilities;
+pub mod utilities;
 pub mod validation;
 
 use crate::app::AppState;
