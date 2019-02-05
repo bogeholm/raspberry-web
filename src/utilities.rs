@@ -75,7 +75,8 @@ pub fn set_gpio_in_use_db(
             if val == 1 {
                 info!("Set 'in_use={}' for GPIO #{}", state, id);
             } else {
-                warn! {"SQL statement 'in_use={}' for GPIO #{} affects {} rows", state, id, val};
+                //warn! {"SQL statement 'in_use={}' for GPIO #{} affects {} rows", state, id, val};
+                return Err(diesel::result::Error::NotFound);
             }
         }
         Err(err) => {
@@ -108,7 +109,8 @@ pub fn set_gpio_mode_db(
             if val == 1 {
                 info!("Set 'gpio_mode={}' for GPIO #{}", mode, id);
             } else {
-                warn! {"SQL statement 'gpio_mode={}' for GPIO #{} affects {} rows", mode, id, val};
+                //warn! {"SQL statement 'gpio_mode={}' for GPIO #{} affects {} rows", mode, id, val};
+                return Err(diesel::result::Error::NotFound);
             }
         }
         Err(err) => {
@@ -141,7 +143,8 @@ pub fn set_gpio_level_db(
             if val == 1 {
                 info!("Set 'gpio_level={}' for GPIO #{}", level, id);
             } else {
-                warn! {"SQL statement 'gpio_level={}' for GPIO #{} affects {} rows", level, id, val};
+                //warn! {"SQL statement 'gpio_level={}' for GPIO #{} affects {} rows", level, id, val};
+                return Err(diesel::result::Error::NotFound);
             }
         }
         Err(err) => {
