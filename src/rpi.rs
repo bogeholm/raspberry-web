@@ -47,7 +47,7 @@ pub fn set_gpio_level_rpi(
     gpio_id: i32,
     level: &str,
     gpio_arc_mutex: GpioArcMutex,
-) -> Result<(), Error> {
+) -> Result<(), RpWebError> {
     let gpio_id_u8 = i32_to_u8(gpio_id)?;
     let data = gpio_arc_mutex.lock();
 
@@ -66,14 +66,12 @@ pub fn set_gpio_level_rpi(
                     output_pin.set_low()
                 }
                 _ => {
-                    return Err(Error::new(
-                        ErrorKind::Other,
-                        format!("Invalid level: '{}'", level),
-                    ));
+                    let errs = format!("Invalid level: '{}'", level);
+                    return Err(RpWebError::new(&errs));
                 }
             }
         }
-        Err(err) => return Err(Error::new(ErrorKind::Other, err.to_string())),
+        Err(err) => return Err(RpWebError::new(&err.to_string())),
     }
     Ok(())
 }

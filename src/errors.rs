@@ -2,13 +2,13 @@
 // https://stevedonovan.github.io/rust-gentle-intro/6-error-handling.html
 
 use actix_web::error::ResponseError;
-use std::io::Error as stdIoError;
 use diesel::result::Error as dieselError;
-use std::num::ParseIntError as numParseIntError;
 use std::env::VarError as stdVarError;
+use std::io::Error as stdIoError;
+use std::num::ParseIntError as numParseIntError;
 
-use std::fmt;
 use std::error;
+use std::fmt;
 
 #[derive(Debug)]
 pub enum RpWebError {
@@ -81,13 +81,13 @@ impl From<stdVarError> for RpWebError {
     }
 }
 
-impl From<stdIoError> for RpWebError{
+impl From<stdIoError> for RpWebError {
     fn from(err: stdIoError) -> RpWebError {
         RpWebError::IoError(err)
     }
 }
 
-impl From<dieselError> for RpWebError{
+impl From<dieselError> for RpWebError {
     fn from(err: dieselError) -> RpWebError {
         RpWebError::DbError(err)
     }

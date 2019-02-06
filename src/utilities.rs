@@ -33,7 +33,10 @@ pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), RpWeb
         if n_updated == 1 {
             debug!("Reset values for GPIO #{}", idx);
         } else {
-            let errs = format!("SQL for resetting table 'gpio_state' for GPIO #{} affects {} rows", idx, n_updated);
+            let errs = format!(
+                "SQL for resetting table 'gpio_state' for GPIO #{} affects {} rows",
+                idx, n_updated
+            );
             error!("{}", errs);
             Err(RpWebError::new(&errs))?
         }
@@ -57,11 +60,7 @@ pub fn get_allowed_states(
     Ok(res)
 }
 
-pub fn set_gpio_in_use_db(
-    id: i32,
-    state: i32,
-    conn: &SqliteConnection,
-) -> Result<(), RpWebError> {
+pub fn set_gpio_in_use_db(id: i32, state: i32, conn: &SqliteConnection) -> Result<(), RpWebError> {
     let target = gpio_state.filter(gpio_id.eq(id));
 
     let result = diesel::update(target)
@@ -76,7 +75,10 @@ pub fn set_gpio_in_use_db(
             if val == 1 {
                 info!("Set 'in_use={}' for GPIO #{}", state, id);
             } else {
-                let errs = format!("SQL statement 'in_use={}' for GPIO #{} affects {} rows", state, id, val);
+                let errs = format!(
+                    "SQL statement 'in_use={}' for GPIO #{} affects {} rows",
+                    state, id, val
+                );
                 Err(RpWebError::new(&errs))?;
             }
         }
@@ -91,11 +93,7 @@ pub fn set_gpio_in_use_db(
     Ok(())
 }
 
-pub fn set_gpio_mode_db(
-    id: i32,
-    mode: &str,
-    conn: &SqliteConnection,
-) -> Result<(), RpWebError> {
+pub fn set_gpio_mode_db(id: i32, mode: &str, conn: &SqliteConnection) -> Result<(), RpWebError> {
     let target = gpio_state.filter(gpio_id.eq(id));
 
     let result = diesel::update(target)
@@ -110,7 +108,10 @@ pub fn set_gpio_mode_db(
             if val == 1 {
                 info!("Set 'gpio_mode={}' for GPIO #{}", mode, id);
             } else {
-                let errs = format!("SQL statement 'gpio_mode={}' for GPIO #{} affects {} rows", mode, id, val);
+                let errs = format!(
+                    "SQL statement 'gpio_mode={}' for GPIO #{} affects {} rows",
+                    mode, id, val
+                );
                 Err(RpWebError::new(&errs))?;
             }
         }
@@ -125,11 +126,7 @@ pub fn set_gpio_mode_db(
     Ok(())
 }
 
-pub fn set_gpio_level_db(
-    id: i32,
-    level: &str,
-    conn: &SqliteConnection,
-) -> Result<(), RpWebError> {
+pub fn set_gpio_level_db(id: i32, level: &str, conn: &SqliteConnection) -> Result<(), RpWebError> {
     let target = gpio_state.filter(gpio_id.eq(id));
 
     let result = diesel::update(target)
@@ -144,7 +141,10 @@ pub fn set_gpio_level_db(
             if val == 1 {
                 info!("Set 'gpio_level={}' for GPIO #{}", level, id);
             } else {
-                let errs = format!("SQL statement 'gpio_level={}' for GPIO #{} affects {} rows", level, id, val);
+                let errs = format!(
+                    "SQL statement 'gpio_level={}' for GPIO #{} affects {} rows",
+                    level, id, val
+                );
                 Err(RpWebError::new(&errs))?;
             }
         }

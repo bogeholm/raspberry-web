@@ -8,12 +8,12 @@ use diesel_migrations::RunMigrationsError;
 use raspberry_web::models;
 use raspberry_web::schema;
 use raspberry_web::utilities::{
-    get_allowed_states, 
+    get_allowed_states,
     reset_table_gpio_state,
     set_gpio_in_use_db,
     set_gpio_mode_db,
     //set_gpio_mode_level_db
-    };
+};
 
 embed_migrations!("migrations");
 
@@ -113,7 +113,7 @@ fn reset_table_gpio_state_after_update_must_succeed() {
     assert_eq!(gpio_reset.gpio_level, Some("".to_string()));
 }
 
-#[test] 
+#[test]
 fn set_existing_gpio_in_use_db_must_succeed() {
     use crate::schema::gpio_state::dsl::*;
     let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
@@ -135,7 +135,7 @@ fn set_existing_gpio_in_use_db_must_succeed() {
     assert_eq!(gpio_changed.in_use, 1);
 }
 
-#[test] 
+#[test]
 fn set_nonexisting_gpio_in_use_db_must_fail() {
     let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
     let connection = pool.get().expect("Failed to acquire connection");
@@ -147,7 +147,7 @@ fn set_nonexisting_gpio_in_use_db_must_fail() {
     assert!(res.is_err());
 }
 
-#[test] 
+#[test]
 fn set_mode_existing_gpio_db_must_succeed() {
     use crate::schema::gpio_state::dsl::*;
     let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
@@ -169,7 +169,7 @@ fn set_mode_existing_gpio_db_must_succeed() {
     assert_eq!(gpio_changed.gpio_mode, Some(mode_change));
 }
 
-#[test] 
+#[test]
 fn set_mode_nonexisting_gpio_db_must_fail() {
     let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
     let connection = pool.get().expect("Failed to acquire connection");
@@ -182,13 +182,13 @@ fn set_mode_nonexisting_gpio_db_must_fail() {
 }
 
 /*
-#[test] 
+#[test]
 fn set_existing_gpio_to_forbidden_mode_db_must_fail() {
     assert!(true);
 }
 */
 
-#[test] 
+#[test]
 fn set_level_existing_gpio_db_must_succeed() {
     use crate::schema::gpio_state::dsl::*;
     let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
@@ -210,7 +210,7 @@ fn set_level_existing_gpio_db_must_succeed() {
     assert_eq!(gpio_changed.gpio_mode, Some(level_change));
 }
 
-#[test] 
+#[test]
 fn set_level_nonexisting_gpio_db_must_fail() {
     let pool = get_pool_after_migrations().expect("Failed to create r2d2 pool.");
     let connection = pool.get().expect("Failed to acquire connection");
@@ -223,7 +223,7 @@ fn set_level_nonexisting_gpio_db_must_fail() {
 }
 
 /*
-#[test] 
+#[test]
 fn set_existing_gpio_to_forbidden_level_db_must_fail() {
     assert!(true);
 }
