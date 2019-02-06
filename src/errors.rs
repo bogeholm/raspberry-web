@@ -93,6 +93,7 @@ impl From<dieselError> for RpWebError{
     }
 }
 
+// Avoids the trait `actix_web::error::ResponseError` is not implemented for `RpWebError`
 // https://github.com/actix/actix-website/blob/master/content/docs/errors.md
 // Use default implementation for `error_response()` method
 impl ResponseError for RpWebError {}

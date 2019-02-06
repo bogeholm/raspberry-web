@@ -3,7 +3,6 @@ use crate::utilities::i32_to_u8;
 use parking_lot::Mutex;
 #[cfg(target_arch = "arm")]
 use rppal::gpio::{Error as rppalError, Gpio};
-use std::io::{Error, ErrorKind};
 use std::sync::Arc;
 
 #[cfg(not(target_arch = "arm"))]
