@@ -1,3 +1,4 @@
+use crate::errors::RpWebError;
 use crate::utilities::i32_to_u8;
 use parking_lot::Mutex;
 #[cfg(target_arch = "arm")]
@@ -27,17 +28,15 @@ pub fn set_gpio_level_rpi(
     gpio_id: i32,
     level: &str,
     gpio_arc_mutex: GpioArcMutex,
-) -> Result<(), Error> {
+) -> Result<(), RpWebError> {
     let _gpio_id_u8 = i32_to_u8(gpio_id)?;
     let mut data = gpio_arc_mutex.lock();
     match level {
         "high" => *data += 1,
         "low" => *data += 1,
         _ => {
-            return Err(Error::new(
-                ErrorKind::Other,
-                format!("Invalid level: '{}'", level),
-            ));
+            let errs = format!("Invalid level: '{}'", level);
+            return Err(RpWebError::new(&errs));
         }
     }
     Ok(())

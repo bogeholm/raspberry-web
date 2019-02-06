@@ -1,6 +1,7 @@
 // https://doc.rust-lang.org/rust-by-example/error/multiple_error_types/wrap_error.html
 // https://stevedonovan.github.io/rust-gentle-intro/6-error-handling.html
 
+use actix_web::error::ResponseError;
 use std::io::Error as stdIoError;
 use diesel::result::Error as dieselError;
 use std::num::ParseIntError as numParseIntError;
@@ -91,3 +92,7 @@ impl From<dieselError> for RpWebError{
         RpWebError::DbError(err)
     }
 }
+
+// https://github.com/actix/actix-website/blob/master/content/docs/errors.md
+// Use default implementation for `error_response()` method
+impl ResponseError for RpWebError {}

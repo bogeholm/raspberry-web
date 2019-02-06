@@ -9,6 +9,7 @@ extern crate log;
 extern crate serde_derive;
 
 pub mod app;
+pub mod errors;
 pub mod handlers;
 pub mod models;
 pub mod rpi;

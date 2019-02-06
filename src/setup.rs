@@ -1,3 +1,4 @@
+use crate::errors::RpWebError;
 use crate::rpi::{set_gpio_level_rpi, GpioArcMutex};
 use crate::utilities::{set_gpio_in_use_db, set_gpio_level_db, set_gpio_mode_db};
 use diesel::SqliteConnection;
@@ -83,7 +84,7 @@ pub fn setup_rpi_and_db(
     map: &HashMap<&'static str, Vec<i32>>,
     conn: &SqliteConnection,
     gpio_arc_mutex: GpioArcMutex,
-) -> Result<(), Error> {
+) -> Result<(), RpWebError> {
     // Should be set to 1
     match map.get("GPIOS_IN_USE") {
         Some(vec) => {
