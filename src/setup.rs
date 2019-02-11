@@ -4,9 +4,6 @@ use crate::utilities::{set_gpio_in_use_db, set_gpio_level_db, set_gpio_mode_db};
 use diesel::SqliteConnection;
 use std::collections::HashMap;
 use std::env;
-use std::env::VarError;
-use std::io::{Error, ErrorKind};
-use std::num::ParseIntError;
 
 pub fn read_env_delimiter() -> String {
     // Get delimiter from .env - if not set, use
@@ -26,7 +23,7 @@ pub fn read_env_delimiter() -> String {
 }
 
 // Given a string (read from env_var), read into vec
-pub fn parse_string_to_vec(delimiter: &str, parse_str: &str) -> Result<Vec<i32>, ParseIntError> {
+pub fn parse_string_to_vec(delimiter: &str, parse_str: &str) -> Result<Vec<i32>, RpWebError> {
     let vec: Result<Vec<i32>, _> = parse_str
         .split(&delimiter)
         .map(|x| x.parse::<i32>())
@@ -39,13 +36,13 @@ pub fn parse_string_to_vec(delimiter: &str, parse_str: &str) -> Result<Vec<i32>,
         }
         Err(err) => {
             warn!("Could not parse '{}' to Vec<i32>: {}", parse_str, err);
-            Err(err)
+            Err(err)?
         }
     }
 }
 
 // Read env_var into string, handle errors
-pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
+pub fn read_env_to_str(var_to_read: &str) -> Result<String, RpWebError> {
     let env_var = env::var(var_to_read);
 
     match env_var {
@@ -56,7 +53,7 @@ pub fn read_env_to_str(var_to_read: &str) -> Result<String, VarError> {
         Err(err) => {
             // Should not be a warning - user can specify which variables to read
             info!("Did not find {}: {}", var_to_read, err);
-            Err(err)
+            Err(err)?
         }
     }
 }
@@ -89,8 +86,7 @@ pub fn setup_rpi_and_db(
     match map.get("GPIOS_IN_USE") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_in_use_db(*idx, 1, conn)
-                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
+                let _ = set_gpio_in_use_db(*idx, 1, conn)?;
             }
         }
         _ => debug!("GPIOS_IN_USE not set"),
@@ -100,8 +96,7 @@ pub fn setup_rpi_and_db(
     match map.get("GPIOS_MODE_OUTPUT") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_mode_db(*idx, "output", conn)
-                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
+                let _ = set_gpio_mode_db(*idx, "output", conn)?;
             }
         }
         _ => debug!("GPIOS_MODE_OUTPUT not set"),
@@ -111,8 +106,7 @@ pub fn setup_rpi_and_db(
     match map.get("GPIOS_MODE_INPUT") {
         Some(vec) => {
             for idx in vec.iter() {
-                let _ = set_gpio_mode_db(*idx, "input", conn)
-                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
+                let _ = set_gpio_mode_db(*idx, "input", conn)?;
             }
         }
         _ => debug!("GPIOS_MODE_INPUT not set"),
@@ -123,8 +117,7 @@ pub fn setup_rpi_and_db(
         Some(vec) => {
             for idx in vec.iter() {
                 let _ = set_gpio_level_rpi(*idx, "low", gpio_arc_mutex.clone())?;
-                let _ = set_gpio_level_db(*idx, "low", conn)
-                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
+                let _ = set_gpio_level_db(*idx, "low", conn)?;
             }
         }
         _ => debug!("GPIOS_LEVEL_LOW not set"),
@@ -135,8 +128,7 @@ pub fn setup_rpi_and_db(
         Some(vec) => {
             for idx in vec.iter() {
                 let _ = set_gpio_level_rpi(*idx, "high", gpio_arc_mutex.clone())?;
-                let _ = set_gpio_level_db(*idx, "high", conn)
-                    .map_err(|err| Error::new(ErrorKind::Other, err.to_string()))?;
+                let _ = set_gpio_level_db(*idx, "high", conn)?;
             }
         }
         _ => debug!("GPIOS_LEVEL_HIGH not set"),
