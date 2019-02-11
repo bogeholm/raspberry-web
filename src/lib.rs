@@ -63,7 +63,7 @@ pub fn setup_and_run() {
     // Check consistency of parsed_variables
     validate_setup(&parsed_variables).expect("Provided setup variables are inconsistent");
 
-    // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other arcs
+    // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other architectures
     let gpio_arc_mutex = rpi::create_gpio_arc_mutex().expect("Could not acquire GPIO");
 
     // If variables are consistent, setup Raspberry Pi and database

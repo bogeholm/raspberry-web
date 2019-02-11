@@ -15,8 +15,11 @@ table! {
         in_use -> Integer,
         gpio_mode -> Nullable<Text>,
         gpio_level -> Nullable<Text>,
-        last_change -> Nullable<Text>,
+        last_change -> Nullable<Timestamp>,
     }
 }
 
-allow_tables_to_appear_in_same_query!(allowed_states, gpio_state,);
+allow_tables_to_appear_in_same_query!(
+    allowed_states,
+    gpio_state,
+);
