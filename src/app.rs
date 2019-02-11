@@ -3,7 +3,7 @@ use crate::models;
 use crate::rpi;
 use actix::Addr;
 use actix_web::Error as actixError;
-use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State}; //Error};
+use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State};
 use futures::{future, Future};
 
 /// State with DbExecutor address
