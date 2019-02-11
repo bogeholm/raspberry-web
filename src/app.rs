@@ -2,7 +2,7 @@ use crate::handlers::{CheckGpioLevel, DbExecutor, GpioId, SetGpioLevel};
 use crate::models;
 use crate::rpi;
 use actix::Addr;
-use actix_web::Error;
+use actix_web::Error as actixError;
 use actix_web::{http, middleware, App, AsyncResponder, FutureResponse, HttpResponse, Path, State}; //Error};
 use futures::{future, Future};
 
@@ -71,7 +71,7 @@ pub fn set_gpio_level_route(
                 .from_err()
         })
         .and_then(|res| future::result(res).from_err())
-        .then(|res: Result<models::Gpio, Error>| match res {
+        .then(|res: Result<models::Gpio, actixError>| match res {
             Ok(response) => Ok(HttpResponse::Ok().json(response)),
             Err(err) => {
                 let err_string = err.to_string();
