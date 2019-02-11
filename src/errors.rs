@@ -3,6 +3,8 @@
 
 use actix_web::error::ResponseError;
 use diesel::result::Error as dieselError;
+#[cfg(target_arch = "arm")]
+use rppal::gpio::Error as rppalError;
 use std::env::VarError as stdVarError;
 use std::io::Error as stdIoError;
 use std::num::ParseIntError as numParseIntError;
@@ -17,6 +19,8 @@ pub enum RpWebError {
     VarError(stdVarError),
     IoError(stdIoError),
     DbError(dieselError),
+    #[cfg(target_arch = "arm")]
+    GpioError(rppalError),
     Generic(String),
 }
 
@@ -35,6 +39,8 @@ impl fmt::Display for RpWebError {
             RpWebError::VarError(ref err) => err.fmt(formatter),
             RpWebError::IoError(ref err) => err.fmt(formatter),
             RpWebError::DbError(ref err) => err.fmt(formatter),
+            #[cfg(target_arch = "arm")]
+            RpWebError::GpioError(ref err) => err.fmt(formatter),
             RpWebError::Generic(ref errs) => write!(formatter, "{}", errs),
         }
     }
@@ -48,6 +54,8 @@ impl error::Error for RpWebError {
             RpWebError::VarError(ref err) => err.description(),
             RpWebError::IoError(ref err) => err.description(),
             RpWebError::DbError(ref err) => err.description(),
+            #[cfg(target_arch = "arm")]
+            RpWebError::GpioError(ref err) => err.description(),
             RpWebError::Generic(ref _errs) => "Generic RpWebError",
         }
     }
@@ -61,6 +69,8 @@ impl error::Error for RpWebError {
             RpWebError::VarError(ref err) => Some(err),
             RpWebError::IoError(ref err) => Some(err),
             RpWebError::DbError(ref err) => Some(err),
+            #[cfg(target_arch = "arm")]
+            RpWebError::GpioError(ref err) => Some(err),
             RpWebError::Generic(ref _errs) => None,
         }
     }
@@ -90,6 +100,13 @@ impl From<stdIoError> for RpWebError {
 impl From<dieselError> for RpWebError {
     fn from(err: dieselError) -> RpWebError {
         RpWebError::DbError(err)
+    }
+}
+
+#[cfg(target_arch = "arm")]
+impl From<rppalError> for RpWebError {
+    fn from(err: rppalError) -> RpWebError {
+        RpWebError::GpioError(err)
     }
 }
 
