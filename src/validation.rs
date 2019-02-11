@@ -1,7 +1,7 @@
+use crate::errors::RpWebError;
 use std::collections::HashMap;
-use std::io::{Error, ErrorKind};
 
-pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error> {
+pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), RpWebError> {
     // All GPIOs set to either 'high' or 'low' for 'gpio_level' must have 'in_use' = 1
     // All GPIOs set to either 'high' or 'low' for 'gpio_level' must have 'gpio_mode' = 'output'
     // GPIO's set to 'gpio_level' = 'low' must not be set to 'high' and vice versa
@@ -11,33 +11,27 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
     for level in levels.iter() {
         if let Some(vec) = map.get(*level) {
             // Must be present if levels are set
-            let in_use = map.get("GPIOS_IN_USE").ok_or(Error::new(
-                ErrorKind::Other,
+            let in_use = map.get("GPIOS_IN_USE").ok_or(RpWebError::new(
                 "GPIO_LEVEL_* is set, but GPIOS_IN_USE is not set",
             ))?;
 
             // Must be present if levels are set
-            let output = map.get("GPIOS_MODE_OUTPUT").ok_or(Error::new(
-                ErrorKind::Other,
+            let output = map.get("GPIOS_MODE_OUTPUT").ok_or(RpWebError::new(
                 "GPIO_LEVEL_* is set, but GPIOS_MODE_OUTPUT is not set",
             ))?;
 
             for idx in vec.iter() {
                 if !in_use.contains(idx) {
-                    return Err(Error::new(
-                        ErrorKind::Other,
-                        format!("GPIO #{} is not IN_USE, but {} is set for it", idx, *level),
-                    ));
+                    let errs = format!("GPIO #{} is not IN_USE, but {} is set for it", idx, *level);
+                    return Err(RpWebError::new(&errs));
                 }
 
                 if !output.contains(idx) {
-                    return Err(Error::new(
-                        ErrorKind::Other,
-                        format!(
-                            "GPIO #{} is not configured to OUTPUT, but {} is set for it",
-                            idx, *level
-                        ),
-                    ));
+                    let errs = format!(
+                        "GPIO #{} is not configured to OUTPUT, but {} is set for it",
+                        idx, *level
+                    );
+                    return Err(RpWebError::new(&errs));
                 }
             }
         }
@@ -47,13 +41,11 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
         if let Some(vec_high) = map.get("GPIOS_LEVEL_HIGH") {
             for id_low in vec_low.iter() {
                 if vec_high.contains(id_low) {
-                    return Err(Error::new(
-                        ErrorKind::Other,
-                        format!(
-                            "GPIO #{} is in both GPIOS_LEVEL_LOW and GPIOS_LEVEL_HIGH",
-                            id_low
-                        ),
-                    ));
+                    let errs = format!(
+                        "GPIO #{} is in both GPIOS_LEVEL_LOW and GPIOS_LEVEL_HIGH",
+                        id_low
+                    );
+                    return Err(RpWebError::new(&errs));
                 }
             }
         }
@@ -63,13 +55,11 @@ pub fn validate_setup(map: &HashMap<&'static str, Vec<i32>>) -> Result<(), Error
         if let Some(vec_output) = map.get("GPIOS_MODE_OUTPUT") {
             for id_low in vec_input.iter() {
                 if vec_output.contains(id_low) {
-                    return Err(Error::new(
-                        ErrorKind::Other,
-                        format!(
-                            "GPIO #{} is in both GPIOS_MODE_INPUT and GPIOS_MODE_OUTPUT",
-                            id_low
-                        ),
-                    ));
+                    let errs = format!(
+                        "GPIO #{} is in both GPIOS_MODE_INPUT and GPIOS_MODE_OUTPUT",
+                        id_low
+                    );
+                    return Err(RpWebError::new(&errs));
                 }
             }
         }

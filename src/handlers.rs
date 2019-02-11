@@ -1,7 +1,7 @@
 use crate::models;
 use crate::utilities::get_allowed_states;
 use actix::{Actor, Handler, Message, SyncContext};
-use actix_web::{error, Error};
+use actix_web::{error, Error as actixError};
 use chrono::Local;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
@@ -20,7 +20,7 @@ pub struct GpioId {
 }
 
 impl Message for GpioId {
-    type Result = Result<models::Gpio, Error>;
+    type Result = Result<models::Gpio, actixError>;
 }
 
 pub struct CheckGpioLevel {
@@ -29,7 +29,7 @@ pub struct CheckGpioLevel {
 }
 
 impl Message for CheckGpioLevel {
-    type Result = Result<models::Gpio, Error>;
+    type Result = Result<models::Gpio, actixError>;
 }
 
 pub struct SetGpioLevel {
@@ -38,11 +38,11 @@ pub struct SetGpioLevel {
 }
 
 impl Message for SetGpioLevel {
-    type Result = Result<models::Gpio, Error>;
+    type Result = Result<models::Gpio, actixError>;
 }
 
 impl Handler<GpioId> for DbExecutor {
-    type Result = Result<models::Gpio, Error>;
+    type Result = Result<models::Gpio, actixError>;
 
     fn handle(&mut self, msg: GpioId, _: &mut Self::Context) -> Self::Result {
         use crate::schema::gpio_state::dsl::*;
@@ -68,7 +68,7 @@ impl Handler<GpioId> for DbExecutor {
 }
 
 impl Handler<CheckGpioLevel> for DbExecutor {
-    type Result = Result<models::Gpio, Error>;
+    type Result = Result<models::Gpio, actixError>;
 
     fn handle(&mut self, msg: CheckGpioLevel, _: &mut Self::Context) -> Self::Result {
         let required_gpio_mode = "output";
@@ -138,7 +138,7 @@ impl Handler<CheckGpioLevel> for DbExecutor {
 }
 
 impl Handler<SetGpioLevel> for DbExecutor {
-    type Result = Result<models::Gpio, Error>;
+    type Result = Result<models::Gpio, actixError>;
 
     fn handle(&mut self, msg: SetGpioLevel, _: &mut Self::Context) -> Self::Result {
         use crate::schema::gpio_state::dsl::*;
