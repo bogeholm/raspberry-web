@@ -1,0 +1,11 @@
+[webserver]
+hostname = "0.0.0.0"
+port = 2323
+
+[database]
+database_url = "rpiweb-db/raspberry-web.sqlite"
+
+[gpioconfig]
+gpios_in_use = [1, 2]
+gpios_mode_output = [1, 2]
+gpios_level_low = [1, 2]

@@ -9,17 +9,21 @@ extern crate log;
 extern crate serde_derive;
 
 pub mod app;
+pub mod cli;
 pub mod errors;
 pub mod handlers;
 pub mod models;
 pub mod rpi;
 pub mod schema;
+pub mod settings;
 pub mod setup;
 pub mod utilities;
 pub mod validation;
 
 use crate::app::AppState;
+use crate::cli::get_cli_args;
 use crate::handlers::DbExecutor;
+//use crate::settings::Settings;
 use crate::setup::{read_env_to_hashmap, setup_rpi_and_db};
 use crate::utilities::reset_table_gpio_state;
 use crate::validation::validate_setup;
@@ -27,20 +31,25 @@ use actix::SyncArbiter;
 use actix_web::server;
 use diesel::{r2d2::ConnectionManager, SqliteConnection};
 use dotenv::dotenv;
-use std::env;
 
 pub fn setup_and_run() {
+    // Get CLI args
+    let cli_args = get_cli_args();
+
+    // Get settings from configuration file
+    let config = settings::Settings::new(cli_args).expect("Could not read config file");
+    let database_url = &config.database.database_url;
+    let hostname = config.webserver.hostname;
+    let port = config.webserver.port;
+
     // Read environment variables from .env - must come before env_logger::init()
     dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL not found");
-    let hostname = env::var("HOSTNAME").expect("HOSTNAME not found");
-    let port = env::var("PORT").expect("PORT not found");
 
     // Initialize logger
     env_logger::init();
 
     // Create database connection pool
-    let manager = ConnectionManager::<SqliteConnection>::new(database_url);
+    let manager = ConnectionManager::<SqliteConnection>::new(database_url.to_string());
     let pool = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create r2d2 pool.");
@@ -61,7 +70,7 @@ pub fn setup_and_run() {
     // Parse env_keys. Hashmap will be empty if no keys are found
     let parsed_variables = read_env_to_hashmap(&env_keys);
     // Check consistency of parsed_variables
-    validate_setup(&parsed_variables).expect("Provided setup variables are inconsistent");
+    validate_setup(&config.gpioconfig).expect("Provided setup variables are inconsistent");
 
     // Arc<Mutex<rppal::gpio::Gpio>> or ARM, Arc<Mutex<i32>> on other architectures
     let gpio_arc_mutex = rpi::create_gpio_arc_mutex().expect("Could not acquire GPIO");
