@@ -1,5 +1,5 @@
-use config::{Config, ConfigError, File};
 use clap::ArgMatches;
+use config::{Config, ConfigError, File};
 
 // https://github.com/mehcode/config-rs/tree/master/examples/hierarchical-env
 #[derive(Debug, Serialize, Deserialize)]
@@ -10,7 +10,7 @@ pub struct Webserver {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Database {
-    pub database_url: String
+    pub database_url: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -26,7 +26,7 @@ pub struct GpioConfig {
 pub struct Settings {
     pub webserver: Webserver,
     pub database: Database,
-    pub gpioconfig: GpioConfig
+    pub gpioconfig: GpioConfig,
 }
 
 impl Settings {
@@ -42,9 +42,8 @@ impl Settings {
         let default_config_file = "/usr/local/rpiweb/configuration.toml";
 
         // Let user supply a config file, or use default
-        let config_file = args.value_of("config-file")
-            .unwrap_or(default_config_file);    
-    
+        let config_file = args.value_of("config-file").unwrap_or(default_config_file);
+
         settings.merge(File::with_name(config_file))?;
         settings.try_into()
     }

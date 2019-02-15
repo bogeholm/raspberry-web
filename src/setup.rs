@@ -9,7 +9,6 @@ pub fn setup_rpi_and_db(
     conn: &SqliteConnection,
     gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), RpWebError> {
-    
     // Should be set to 1
     if let Some(gpios_in_use) = &gpioconfig.gpios_in_use {
         for idx in gpios_in_use.iter() {
