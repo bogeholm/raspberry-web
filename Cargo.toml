@@ -33,8 +33,8 @@ maintainer = "Troels Mikkelsen <troelsmikkelsen@gmail.com>"
 copyright = "2018, Troels Mikkelsen"
 depends = "$auto, systemd"
 conf-files = [
-    "/usr/local/rpiweb/configuration.toml", 
-    "/etc/systemd/system/rpiweb.service",
+    "/usr/local/raspberry-web/configuration.toml", 
+    "/etc/systemd/system/raspberry-web.service",
 ]
 extended-description = """\
 Web server for controlling the GPIO pins on Raspberry Pi.\
@@ -42,8 +42,8 @@ Web server for controlling the GPIO pins on Raspberry Pi.\
 section = "admin"
 priority = "optional"
 assets = [
-    ["target/release/rpiweb", "/usr/local/bin/", "755"],
-    ["config/configuration.toml", "/usr/local/rpiweb/", "644"],
-    ["rpiweb-db/raspberry-web.sqlite", "/usr/local/bin/rpiweb-db/raspberry-web.sqlite", "644"],
-    ["config/rpiweb.service", "/etc/systemd/system/", "644"],
+    ["target/release/raspberry-web", "/usr/local/bin/", "755"],
+    ["config/configuration.toml", "/usr/local/raspberry-web/", "644"],
+    ["raspberry-web-db/raspberry-web.sqlite", "/usr/local/bin/raspberry-web-db/raspberry-web.sqlite", "644"],
+    ["config/raspberry-web.service", "/etc/systemd/system/", "644"],
 ]
