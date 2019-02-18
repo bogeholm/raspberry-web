@@ -168,62 +168,77 @@ mod tests {
         assert!(res.is_err());
     }
     
-    /*
+    
     #[test]
-    fn in_use_not_set_for_pin_level_set_must_fail() {
-        let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();
-        map.insert("GPIOS_IN_USE", vec![1, 2]);
-        map.insert("GPIOS_MODE_OUTPUT", vec![1, 2, 3]);
-        map.insert("GPIOS_LEVEL_LOW", vec![3]);
+    fn validation_in_use_not_set_for_pin_level_set_must_fail() {
+        let gpioconfig = GpioConfig {
+            gpios_in_use: Some(vec![1, 2]),
+            gpios_mode_output: Some(vec![1, 2, 3]),
+            gpios_mode_input: None,
+            gpios_level_low: Some(vec![3]),
+            gpios_level_high: None,
+        };
 
-        let res = validate_setup(&map);
+        let res = validate_setup(&gpioconfig);
+        assert!(res.is_err());
+    }
+    
+    #[test]
+    fn validation_mode_output_not_set_for_pin_level_high_set_must_fail() {
+        let gpioconfig = GpioConfig {
+            gpios_in_use: Some(vec![1, 2, 3]),
+            gpios_mode_output: Some(vec![1, 2]),
+            gpios_mode_input: None,
+            gpios_level_low: Some(vec![3]),
+            gpios_level_high: None,
+        };
+
+        let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
 
+    
     #[test]
-    fn mode_output_not_set_for_pin_level_high_set_must_fail() {
-        let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();
-        map.insert("GPIOS_IN_USE", vec![1, 2, 3]);
-        map.insert("GPIOS_MODE_OUTPUT", vec![1, 2]);
-        map.insert("GPIOS_LEVEL_HIGH", vec![3]);
+    fn validation_same_pin_high_and_low_must_fail() {
+        let gpioconfig = GpioConfig {
+            gpios_in_use: Some(vec![1, 2]),
+            gpios_mode_output: Some(vec![1, 2]),
+            gpios_mode_input: None,
+            gpios_level_low: Some(vec![1]),
+            gpios_level_high: Some(vec![1]),
+        };
 
-        let res = validate_setup(&map);
+        let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
 
+    
     #[test]
-    fn same_pin_high_and_low_must_fail() {
-        let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();
-        map.insert("GPIOS_IN_USE", vec![1, 2]);
-        map.insert("GPIOS_MODE_OUTPUT", vec![1, 2]);
-        map.insert("GPIOS_LEVEL_LOW", vec![1]);
-        map.insert("GPIOS_LEVEL_HIGH", vec![1]);
+    fn validation_same_pin_input_and_output_must_fail() {
+        let gpioconfig = GpioConfig {
+            gpios_in_use: Some(vec![1]),
+            gpios_mode_output: Some(vec![1]),
+            gpios_mode_input: Some(vec![1]),
+            gpios_level_low: None,
+            gpios_level_high: None,
+        };
 
-        let res = validate_setup(&map);
+        let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
-
+    
     #[test]
-    fn same_pin_input_and_output_must_fail() {
-        let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();
-        map.insert("GPIOS_IN_USE", vec![1, 2]);
-        map.insert("GPIOS_MODE_OUTPUT", vec![1]);
-        map.insert("GPIOS_MODE_INPUT", vec![1]);
+    fn validation_valid_setup_must_succeed() {
+        let gpioconfig = GpioConfig {
+            gpios_in_use: Some(vec![1, 2, 3]),
+            gpios_mode_output: Some(vec![1, 2, 3]),
+            gpios_mode_input: None,
+            gpios_level_low: Some(vec![1]),
+            gpios_level_high: Some(vec![2, 3]),
+        };
 
-        let res = validate_setup(&map);
-        assert!(res.is_err());
-    }
+        let res = validate_setup(&gpioconfig);
 
-    #[test]
-    fn valid_setup_must_succeed() {
-        let mut map: HashMap<&'static str, Vec<i32>> = HashMap::new();
-        map.insert("GPIOS_IN_USE", vec![1, 2, 3]);
-        map.insert("GPIOS_MODE_OUTPUT", vec![1, 2, 3]);
-        map.insert("GPIOS_LEVEL_LOW", vec![1]);
-        map.insert("GPIOS_LEVEL_HIGH", vec![2, 3]);
-
-        let res = validate_setup(&map);
         assert!(res.is_ok());
     }
-    */
 }
