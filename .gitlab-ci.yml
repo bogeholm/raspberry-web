@@ -19,11 +19,11 @@ test:x86_64:
 cargo_deb:x86_64:
   image: "rust_latest"
   before_script:
-    cargo install cargo-deb
-    cargo deb --install
+    - cargo install cargo-deb
+    - cargo deb --install
   script:
-    sudo systemctl start rpiweb.service
-    sudo systemctl stop rpiweb.service
+    - sudo systemctl start rpiweb.service
+    - sudo systemctl stop rpiweb.service
 
 # Build binary for ARMv7 by cross compiling from x86_64
 build:armv7:
