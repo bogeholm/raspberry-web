@@ -6,16 +6,27 @@
 # image: "rust:latest"
 
 # Run tests with cargo
-# single threaded version of running tests
+# The single threaded version of running tests would be:
 #- cargo test --all --verbose -- --test-threads=1  
 test:x86_64:
   image: "rust:latest"
   script:
   - rustc --version && cargo --version # Print version info for debugging
   - cargo test --all --verbose  # Not single threaded since this is running on x86_64
-  
 
-build:arm:
+# Build and install binary as service on x86_64 Debian, start and stop the service
+# https://github.com/mmstick/cargo-deb
+cargo_deb:x86_64:
+  image: "rust_latest"
+  before_script:
+    cargo install cargo-deb
+    cargo deb --install
+  script:
+    sudo systemctl start rpiweb.service
+    sudo systemctl stop rpiweb.service
+
+# Build binary for ARMv7 by cross compiling from x86_64
+build:armv7:
   image: "rust:latest"
   before_script:
     - dpkg --add-architecture armhf

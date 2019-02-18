@@ -1,0 +1,11 @@
+[Unit]
+Description=Web server for controlling Raspberry Pi GPIO pins
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/rpiweb
+Type=exec
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
