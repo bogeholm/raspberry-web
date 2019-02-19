@@ -18,12 +18,12 @@ Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 Prerequisites on Raspbian (apart from [Rust](https://www.rust-lang.org/tools/install) :smiley:):
 ```bash
 $ sudo apt-get update && sudo apt-get install build-essential gcc-arm-linux-gnueabihf libsqlite3-dev
-& cargo install cargo-deb
+$ cargo install cargo-deb
 ```
 
 Installation:
 ```bash
-$ git clone https://gitlab.com/bogeholm/raspberry-web && cd raspberry web
+$ git clone https://gitlab.com/bogeholm/raspberry-web && cd raspberry_web
 $ cargo deb --install
 ```
 
