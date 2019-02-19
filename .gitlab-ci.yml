@@ -21,10 +21,11 @@ cargo_deb:x86_64:
   image: "rust:latest"
   before_script:
     - cargo install cargo-deb
-    - cargo deb --install
-  script:
-    - sudo systemctl start raspberry-web.service
-    - sudo systemctl stop raspberry-web.service
+    # - cargo deb --install
+    - cargo deb
+#script:
+#    - sudo systemctl start raspberry-web.service
+#    - sudo systemctl stop raspberry-web.service
 
 # Build binary for ARMv7 by cross compiling from x86_64
 build:armv7:
