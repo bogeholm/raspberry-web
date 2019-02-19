@@ -3,7 +3,7 @@ Description=Web server for controlling Raspberry Pi GPIO pins
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/rpiweb
+ExecStart=/usr/local/bin/raspberry-web
 Type=exec
 Restart=on-failure
 
