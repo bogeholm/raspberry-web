@@ -1,4 +1,8 @@
-# Control GPIO output on Raspberry Pi through a REST service
+# Control GPIO output on Raspberry Pi through a REST service 
+![build status][build]
+
+[build]: https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg "Build status (master)"
+
 Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 ```json
 {
