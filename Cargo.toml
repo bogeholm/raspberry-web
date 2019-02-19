@@ -42,8 +42,11 @@ Web server for controlling the GPIO pins on Raspberry Pi.\
 section = "admin"
 priority = "optional"
 assets = [
+    # Binary
     ["target/release/raspberry-web", "/usr/local/bin/", "755"],
-    ["config/configuration.toml", "/usr/local/raspberry-web/", "644"],
+    # Database
     ["raspberry-web-db/raspberry-web.sqlite", "/usr/local/bin/raspberry-web-db/raspberry-web.sqlite", "644"],
+    # Assets
+    ["config/configuration.toml", "/usr/local/raspberry-web/", "644"],
     ["config/raspberry-web.service", "/etc/systemd/system/", "644"],
 ]
