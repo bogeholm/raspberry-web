@@ -17,14 +17,14 @@ test:x86_64:
 # Build and install binary as service on x86_64 Debian, start and stop the service
 # https://github.com/mmstick/cargo-deb
 # Check out https://github.com/mmstick/cargo-deb/blob/master/.travis.yml
-#cargo_deb:x86_64:
-#  image: "rust:latest"
-#  before_script:
-#    - cargo install cargo-deb
-#    - cargo deb --install
-#  script:
-#    - sudo systemctl start raspberry-web.service
-#    - sudo systemctl stop raspberry-web.service
+cargo_deb:x86_64:
+  image: "rust:latest"
+  before_script:
+    - cargo install cargo-deb
+    - cargo deb --install
+  script:
+    - sudo systemctl start raspberry-web.service
+    - sudo systemctl stop raspberry-web.service
 
 # Build binary for ARMv7 by cross compiling from x86_64
 build:armv7:
