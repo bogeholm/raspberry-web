@@ -11,8 +11,8 @@
 test:x86_64:
   image: "rust:latest"
   script:
-  - rustc --version && cargo --version # Print version info for debugging
-  - cargo test --all --verbose  # Not single threaded since this is running on x86_64
+    - rustc --version && cargo --version # Print version info for debugging
+    - cargo test --all --verbose  # Not single threaded since this is running on x86_64
 
 # Build and install binary as service on x86_64 Debian, start and stop the service
 # https://github.com/mmstick/cargo-deb
@@ -23,8 +23,8 @@ cargo_deb:x86_64:
     - cargo install cargo-deb
     - cargo build --release
   script:
-  - cargo deb
-  - cargo deb --install
+    - cargo deb
+    - cargo deb --install
 #script:
 #    - cargo deb --install
 #    - sudo systemctl start raspberry-web.service
