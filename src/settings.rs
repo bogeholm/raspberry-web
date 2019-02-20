@@ -35,7 +35,7 @@ impl Settings {
 
         // Configuration file for development
         #[cfg(debug_assertions)]
-        let default_config_file = "config/configuration.toml";
+        let default_config_file = "config/dev-configuration.toml";
 
         // Configuration file for installed binary
         #[cfg(not(debug_assertions))]

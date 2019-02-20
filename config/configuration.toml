@@ -3,9 +3,9 @@ hostname = "0.0.0.0"
 port = 2323
 
 [database]
-database_url = "raspberry-web-db/raspberry-web.sqlite"
+database_url = "/usr/local/bin/raspberry-web-db/raspberry-web.sqlite"
 
 [gpioconfig]
-gpios_in_use = [1, 2]
-gpios_mode_output = [1, 2]
-gpios_level_low = [1, 2]
+gpios_in_use = []
+gpios_mode_output = []
+gpios_level_low = []

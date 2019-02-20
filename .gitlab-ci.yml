@@ -21,8 +21,10 @@ cargo_deb:x86_64:
   image: "rust:latest"
   before_script:
     - cargo install cargo-deb
+    - cargo build --release
   script:
   - cargo deb
+  - cargo deb --install
 #script:
 #    - cargo deb --install
 #    - sudo systemctl start raspberry-web.service

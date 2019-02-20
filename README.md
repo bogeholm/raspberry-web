@@ -24,6 +24,8 @@ $ cargo install cargo-deb
 Installation:
 ```bash
 $ git clone https://gitlab.com/bogeholm/raspberry-web && cd raspberry_web
+$ cargo build --release
+$ cargo deb
 $ cargo deb --install
 ```
 
