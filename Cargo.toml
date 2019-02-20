@@ -57,7 +57,7 @@ assets = [
     # Binary
     ["target/release/raspberry-web", "/usr/local/bin/", "755"],
     # Database
-    ["raspberry-web-db/raspberry-web.sqlite", "/usr/local/bin/raspberry-web-db/raspberry-web.sqlite", "666"],
+    ["raspberry-web-db/raspberry-web.sqlite", "/usr/local/bin/raspberry-web.sqlite", "666"],
     # Assets
     ["config/configuration.toml", "/usr/local/raspberry-web/", "644"],
     ["config/raspberry-web.service", "/etc/systemd/system/", "644"],
