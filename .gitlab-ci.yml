@@ -24,7 +24,7 @@ cargo_deb:x86_64:
     - cargo build --release
   script:
     - cargo deb
-    - cargo deb --install
+#- cargo deb --install
 #script:
 #    - cargo deb --install
 #    - sudo systemctl start raspberry-web.service
