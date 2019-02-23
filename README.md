@@ -17,9 +17,10 @@ Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 ## Installation
 Prerequisites on Raspbian (apart from [Rust](https://www.rust-lang.org/tools/install) :smiley:):
 ```bash
-$ sudo apt-get update && sudo apt-get install build-essential gcc-arm-linux-gnueabihf libsqlite3-dev
+$ sudo apt-get update && sudo apt-get install build-essential libsqlite3-dev
 $ cargo install cargo-deb
 ```
+<s>gcc-arm-linux-gnueabihf</s>
 
 Installation:
 ```bash
@@ -42,15 +43,20 @@ gpios_level_low = [3]
 ```
 
 
-Now you can be run the server from the command line:
+Now you can use [systemd](https://wiki.debian.org/systemd) (starting this way will read `/usr/local/rasbberry-web/configuration.toml`):
+```bash
+sudo systemctl start raspberry-web.service
+```
+
+If you want to run run the server from the command line:
 ```bash
 rasbberry-web
 ```
+you will first have to
+
 You can specify an alternate config file
 ```bash
 rasbberry-web --config-file=/path/to/my/awesome/config.toml
 ```
-Or your can use [systemd](https://wiki.debian.org/systemd) (starting this way will read `/usr/local/rasbberry-web/configuration.toml`)
-```bash
-sudo service start raspberry-web.service
-```
+Or your can 
+

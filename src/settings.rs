@@ -39,7 +39,7 @@ impl Settings {
 
         // Configuration file for installed binary
         #[cfg(not(debug_assertions))]
-        let default_config_file = "/usr/local/raspberry-web/configuration.toml";
+        let default_config_file = "/home/pi/raspberry-web/configuration.toml";
 
         // Let user supply a config file, or use default
         let config_file = args.value_of("config-file").unwrap_or(default_config_file);
