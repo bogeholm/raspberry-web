@@ -1,6 +1,6 @@
 [package]
 name = "raspberry-web"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Troels Mikkelsen <troelsmikkelsen@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -57,8 +57,8 @@ assets = [
     # Binary
     ["target/release/raspberry-web", "/usr/local/bin/", "755"],
     # Database
-    ["raspberry-web-db/raspberry-web.sqlite", "/home/pi/db/raspberry-web.sqlite", "664"],
+    ["raspberry-web-db/raspberry-web.sqlite", "/usr/local/raspberry-web/database/raspberry-web.sqlite", "664"], # 775 enough?
     # Assets
-    ["config/configuration.toml", "/home/pi/raspberry-web/", "644"],
+    ["config/configuration.toml", "/usr/local/raspberry-web/configuration.toml", "644"],
     ["config/raspberry-web.service", "/etc/systemd/system/", "644"],
 ]

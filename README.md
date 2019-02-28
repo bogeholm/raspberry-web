@@ -15,19 +15,23 @@ Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 ```
 
 ## Installation
+*Installation is currently work in progress*
 Prerequisites on Raspbian (apart from [Rust](https://www.rust-lang.org/tools/install) :smiley:):
 ```bash
 $ sudo apt-get update && sudo apt-get install build-essential libsqlite3-dev
 $ cargo install cargo-deb
 ```
-<s>gcc-arm-linux-gnueabihf</s>
 
-Installation:
+### Install using `cargo deb`
 ```bash
 $ git clone https://gitlab.com/bogeholm/raspberry-web && cd raspberry_web
 $ cargo build --release
 $ cargo deb
 $ cargo deb --install
+```
+Your user will need write permission to `/usr/local/raspberry-web` unless you only want to run the program as root:
+```
+sudo chown -R $(whoami) /usr/local/raspberry-web
 ```
 
 ## Usage
@@ -43,20 +47,17 @@ gpios_level_low = [3]
 ```
 
 
-Now you can use [systemd](https://wiki.debian.org/systemd) (starting this way will read `/usr/local/rasbberry-web/configuration.toml`):
-```bash
-sudo systemctl start raspberry-web.service
-```
-
-If you want to run run the server from the command line:
+Now you can run the server from the command line:
 ```bash
 rasbberry-web
 ```
-you will first have to
+
+Or you can use [systemd](https://wiki.debian.org/systemd) (starting this way will read `/usr/local/rasbberry-web/configuration.toml`):
+```bash
+sudo systemctl start raspberry-web.service
+```
 
 You can specify an alternate config file
 ```bash
 rasbberry-web --config-file=/path/to/my/awesome/config.toml
 ```
-Or your can 
-
