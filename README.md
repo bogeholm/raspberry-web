@@ -1,7 +1,13 @@
 # Control GPIO output on Raspberry Pi through a REST service 
-![build status][build]
+![Build status][build] ![Code coverage][codecov] ![crates.io][crates] ![Documentation][docs]
 
 [build]: https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg "Build status (master)"
+
+[codecov]: https://codecov.io/gh/bogeholm/raspberry-web/branch/master/graph/badge.svg "Code coverage"
+
+[crates]: https://img.shields.io/crates/v/raspberry-web.svg "crates.io"
+
+[docs]: https://docs.rs/raspberry-web/badge.svg "Documentation"
 
 Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 ```json
@@ -46,7 +52,6 @@ gpios_level_low = [1, 2]
 gpios_level_low = [3]
 ```
 
-
 Now you can run the server from the command line:
 ```bash
 rasbberry-web
@@ -61,3 +66,6 @@ You can specify an alternate config file
 ```bash
 rasbberry-web --config-file=/path/to/my/awesome/config.toml
 ```
+
+## Repositories
+Currently the [GitLab](https://gitlab.com/bogeholm/raspberry-web) repo is mirrored on [GitHub](https://github.com/bogeholm/raspberry-web)
