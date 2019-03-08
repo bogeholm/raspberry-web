@@ -53,5 +53,7 @@ test:coverage:
     - rm -rf kcov-master
     - export PATH="$PATH:/opt/kcov/usr/local/bin/"
     - cargo install cargo-kcov
+  script:
+    - cargo kcov --all
 
   
