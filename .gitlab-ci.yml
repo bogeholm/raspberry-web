@@ -46,7 +46,7 @@ test:coverage:
     - cd kcov-master
     - mkdir build
     - cd build
-    - cmake
+    - cmake ..
     - make
     - make install DESTDIR=/opt/kcov
     - cd ../..
