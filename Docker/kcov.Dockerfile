@@ -1,4 +1,3 @@
-# https://github.com/rust-lang/docker-rust/blob/1d112bc218d6b7a5479a05fa652130d8e086564f/1.31.1/stretch/Dockerfile
 # From: https://docs.docker.com/samples/library/rust/#start-a-rust-instance-running-your-app
 FROM rust:latest
 
@@ -13,19 +12,6 @@ RUN apt-get update \
     libiberty-dev \
     zlib1g-dev
 
-# Print stacktrace on error
-# https://github.com/rust-lang/rust/pull/38165
-RUN export RUST_BACKTRACE=1
-
-# Specify working directory.
-# You should ind mount crate root on host to this directory
-WORKDIR /app
-
-# Using
-# RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc"
-# since specifying linker in .cargo/config proved challenging
-ENTRYPOINT cargo test
-
 # https://sunjay.dev/2016/07/25/rust-code-coverage
 # https://github.com/codecov/example-rust/blob/master/.travis.yml
 # WGET kcov & build
@@ -36,8 +22,24 @@ RUN wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz \
     && cd build \
     && cmake .. \
     && make \ 
-    && make install DESTDIR=../../kcov-build \
+    && make install DESTDIR=/opt/kcov \
     && cd ../.. \
-    && rm -rf kcov-master \
-    && for file in target/debug/raspberry_web-*; do [ -x "${file}" ] || continue; mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done
+    && rm -rf kcov-master
 
+# https://stackoverflow.com/questions/27093612
+ENV PATH="/opt/kcov/usr/local/bin/:${PATH}"
+
+# https://github.com/kennytm/cargo-kcov
+RUN cargo install cargo-kcov
+
+# Specify working directory.
+# You should bind mount crate root on host to this directory
+WORKDIR /app
+
+# https://github.com/rust-lang/cargo/issues/6100
+# 1) Copy crate root contents to /app
+# 2) Get coverage
+# 3) Copy coverage back to /shared/target, and thus to host if volume was mounted
+ENTRYPOINT cp -R /shared/. /app/ \
+    && cargo kcov --all \ 
+    && cp -R target/cov /shared/target/
