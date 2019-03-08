@@ -35,3 +35,23 @@ build:armv7:
     - rustup target add armv7-unknown-linux-gnueabihf
   script:
     - RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc" cargo build --target=armv7-unknown-linux-gnueabihf
+
+test:coverage:
+  image: "rust:latest"
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev zlib1g-dev
+    - wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz
+    - tar xzf master.tar.gz
+    - cd kcov-master
+    - mkdir build
+    - cd build
+    - cmake
+    - make
+    - make install DESTDIR=/opt/kcov
+    - cd ../..
+    - rm -rf kcov-master
+    - export PATH="$PATH:/opt/kcov/usr/local/bin/"
+    - cargo install cargo-kcov
+
+  
