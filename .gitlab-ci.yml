@@ -55,5 +55,10 @@ test:coverage:
     - cargo install cargo-kcov
   script:
     - cargo kcov --all
+  artifacts:
+    paths:
+      - target/cov
+  after_script:
+    - bash <(curl -s https://codecov.io/bash) -s target/cov
 
-  
+# https://github.com/SimonKagstrom/kcov/blob/master/doc/codecov.md
