@@ -1,14 +1,14 @@
-# Control GPIO output on Raspberry Pi through a REST service 
-![Build status][build] ![Code coverage][codecov] ![crates.io][crates] ![Documentation][docs]
+# raspberry-web 
+[![Build status](https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg)](https://gitlab.com/bogeholm/raspberry-web/) 
+[![Build status](https://api.travis-ci.com/bogeholm/raspberry-web.svg?branch=master
+)](https://travis-ci.com/bogeholm/raspberry-web) 
+[![Codecov](https://codecov.io/gh/bogeholm/raspberry-web/branch/master/graph/badge.svg)](https://codecov.io/gh/bogeholm/raspberry-web) 
+[![crates.io](https://img.shields.io/crates/v/raspberry-web.svg)](https://crates.io/crates/raspberry-web) 
+[![docs.rs](https://docs.rs/raspberry-web/badge.svg)](https://docs.rs/crate/raspberry-web/)
 
-[build]: https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg "Build status (master)"
 
-[codecov]: https://codecov.io/gh/bogeholm/raspberry-web/branch/master/graph/badge.svg "Code coverage"
 
-[crates]: https://img.shields.io/crates/v/raspberry-web.svg "crates.io"
-
-[docs]: https://docs.rs/raspberry-web/badge.svg "Documentation"
-
+## Control GPIO output on Raspberry Pi through a REST service 
 Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 ```json
 {
@@ -21,14 +21,13 @@ Run the server and send a GET request to http://localhost:2323/set/level/2/high:
 ```
 
 ## Installation
-*Installation is currently work in progress*
-Prerequisites on Raspbian (apart from [Rust](https://www.rust-lang.org/tools/install) :smiley:):
+Prerequisites on Raspbian (apart from [Rust](https://www.rust-lang.org/tools/install)):
 ```bash
 $ sudo apt-get update && sudo apt-get install build-essential libsqlite3-dev
 $ cargo install cargo-deb
 ```
 
-### Install using `cargo deb`
+### Install using [`cargo deb`](https://github.com/mmstick/cargo-deb)
 ```bash
 $ git clone https://gitlab.com/bogeholm/raspberry-web && cd raspberry_web
 $ cargo build --release
@@ -57,15 +56,16 @@ Now you can run the server from the command line:
 rasbberry-web
 ```
 
-Or you can use [systemd](https://wiki.debian.org/systemd) (starting this way will read `/usr/local/rasbberry-web/configuration.toml`):
-```bash
-sudo systemctl start raspberry-web.service
-```
-
 You can specify an alternate config file
 ```bash
 rasbberry-web --config-file=/path/to/my/awesome/config.toml
 ```
+
+You could also use [systemd](https://wiki.debian.org/systemd) (starting this way will read `/usr/local/rasbberry-web/configuration.toml`):
+```bash
+sudo systemctl start raspberry-web.service
+```
+
 
 ## Repositories
 Currently the [GitLab](https://gitlab.com/bogeholm/raspberry-web) repo is mirrored on [GitHub](https://github.com/bogeholm/raspberry-web)
