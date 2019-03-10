@@ -2,7 +2,7 @@
 [![Build status](https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg)](https://gitlab.com/bogeholm/raspberry-web/) 
 [![Build status](https://api.travis-ci.com/bogeholm/raspberry-web.svg?branch=master
 )](https://travis-ci.com/bogeholm/raspberry-web) 
-[![Codecov](https://codecov.io/gh/bogeholm/raspberry-web/branch/master/graph/badge.svg)](https://codecov.io/gh/bogeholm/raspberry-web) 
+[![Codecov](https://codecov.io/gl/bogeholm/raspberry-web/branch/master/graph/badge.svg)](https://codecov.io/gl/bogeholm/raspberry-web) 
 [![crates.io](https://img.shields.io/crates/v/raspberry-web.svg)](https://crates.io/crates/raspberry-web) 
 [![docs.rs](https://docs.rs/raspberry-web/badge.svg)](https://docs.rs/crate/raspberry-web/)
 
