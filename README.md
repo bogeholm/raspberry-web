@@ -5,7 +5,7 @@
 [![Codecov](https://codecov.io/gl/bogeholm/raspberry-web/branch/master/graph/badge.svg)](https://codecov.io/gl/bogeholm/raspberry-web) 
 [![crates.io](https://img.shields.io/crates/v/raspberry-web.svg)](https://crates.io/crates/raspberry-web) 
 [![docs.rs](https://docs.rs/raspberry-web/badge.svg)](https://docs.rs/crate/raspberry-web/)
-
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 
 ## Control GPIO output on Raspberry Pi through a REST service 
