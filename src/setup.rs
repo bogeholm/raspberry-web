@@ -5,9 +5,7 @@ use crate::utilities::{set_gpio_in_use_db, set_gpio_level_db, set_gpio_mode_db};
 use diesel::SqliteConnection;
 
 pub fn setup_rpi_and_db(
-    gpioconfig: &GpioConfig,
-    conn: &SqliteConnection,
-    gpio_arc_mutex: GpioArcMutex,
+    gpioconfig: &GpioConfig, conn: &SqliteConnection, gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), RpWebError> {
     // Should be set to 1
     if let Some(gpios_in_use) = &gpioconfig.gpios_in_use {

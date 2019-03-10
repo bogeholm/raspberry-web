@@ -45,8 +45,7 @@ pub fn reset_table_gpio_state(connection: &SqliteConnection) -> Result<(), RpWeb
 }
 
 pub fn get_allowed_states(
-    connection: &SqliteConnection,
-    desired_type: &str,
+    connection: &SqliteConnection, desired_type: &str,
 ) -> Result<HashMap<&'static str, bool>, RpWebError> {
     use crate::schema::allowed_states::dsl::*;
 

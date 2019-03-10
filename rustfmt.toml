@@ -1,0 +1,3 @@
+# https://github.com/rust-lang/rustfmt/blob/master/Configurations.md
+unstable_features = true
+fn_args_density = "Compressed"

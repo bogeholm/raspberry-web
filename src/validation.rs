@@ -106,7 +106,6 @@ pub fn validate_setup(gpioconfig: &GpioConfig) -> Result<(), RpWebError> {
     Ok(())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -139,12 +138,11 @@ mod tests {
         assert!(res.is_err());
     }
 
-
     #[test]
     fn validation_mode_output_none_but_level_set_must_fail() {
         let gpioconfig = GpioConfig {
             gpios_in_use: Some(vec![1]),
-            gpios_mode_output: None, 
+            gpios_mode_output: None,
             gpios_mode_input: None,
             gpios_level_low: Some(vec![1]),
             gpios_level_high: None,
@@ -153,7 +151,7 @@ mod tests {
         let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
-    
+
     #[test]
     fn validation_mode_output_not_set_but_level_set_must_fail() {
         let gpioconfig = GpioConfig {
@@ -167,8 +165,7 @@ mod tests {
         let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
-    
-    
+
     #[test]
     fn validation_in_use_not_set_for_pin_level_set_must_fail() {
         let gpioconfig = GpioConfig {
@@ -182,7 +179,7 @@ mod tests {
         let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
-    
+
     #[test]
     fn validation_mode_output_not_set_for_pin_level_high_set_must_fail() {
         let gpioconfig = GpioConfig {
@@ -197,7 +194,6 @@ mod tests {
         assert!(res.is_err());
     }
 
-    
     #[test]
     fn validation_same_pin_high_and_low_must_fail() {
         let gpioconfig = GpioConfig {
@@ -212,7 +208,6 @@ mod tests {
         assert!(res.is_err());
     }
 
-    
     #[test]
     fn validation_same_pin_input_and_output_must_fail() {
         let gpioconfig = GpioConfig {
@@ -226,7 +221,7 @@ mod tests {
         let res = validate_setup(&gpioconfig);
         assert!(res.is_err());
     }
-    
+
     #[test]
     fn validation_valid_setup_must_succeed() {
         let gpioconfig = GpioConfig {

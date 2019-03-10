@@ -24,9 +24,7 @@ pub fn create_gpio_arc_mutex() -> Result<GpioArcMutex, RpWebError> {
 
 #[cfg(not(target_arch = "arm"))]
 pub fn set_gpio_level_rpi(
-    gpio_id: i32,
-    level: &str,
-    gpio_arc_mutex: GpioArcMutex,
+    gpio_id: i32, level: &str, gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), RpWebError> {
     let _gpio_id_u8 = i32_to_u8(gpio_id)?;
     let mut data = gpio_arc_mutex.lock();
@@ -44,9 +42,7 @@ pub fn set_gpio_level_rpi(
 #[allow(unused_mut)] // output_pin needs mut but generates a warning
 #[cfg(target_arch = "arm")]
 pub fn set_gpio_level_rpi(
-    gpio_id: i32,
-    level: &str,
-    gpio_arc_mutex: GpioArcMutex,
+    gpio_id: i32, level: &str, gpio_arc_mutex: GpioArcMutex,
 ) -> Result<(), RpWebError> {
     let gpio_id_u8 = i32_to_u8(gpio_id)?;
     let data = gpio_arc_mutex.lock();
