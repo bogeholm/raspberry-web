@@ -54,7 +54,7 @@ test:coverage:
     - export PATH="$PATH:/opt/kcov/usr/local/bin/"
     - cargo install cargo-kcov
   script:
-    - cargo kcov --all -- --verify --exclude-pattern=$CARGO_HOME,target/debug/build/libsqlite3*
+    - cargo kcov --all -- --verify --exclude-pattern=$CARGO_HOME,*libsqlite3*
   artifacts:
     paths:
       - target/cov
