@@ -4,10 +4,10 @@ version = "0.1.3"
 authors = ["Troels Mikkelsen <troelsmikkelsen@gmail.com>"]
 edition = "2018"
 license = "MIT"
-description = "Web server for controlling the GPIO pins on Raspberry Pi."
-readme="README.md"
-keywords=["raspberry", "pi", "gpio", "network"]
-repository = "https://gitlab.com/bogeholm/raspberry-web"
+description = "Web server for controlling GPIO pins on the Raspberry Pi"
+readme = "README.md"
+keywords = ["raspberry", "pi", "gpio", "network"]
+repository = "https://github.com/bogeholm/raspberry-web"
 
 [dependencies]
 actix = "0.7.9"
