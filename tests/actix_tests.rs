@@ -125,7 +125,7 @@ fn check_status_gpio_nonexistant_failure() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/status/18")
+        .client(http::Method::GET, "/status/38")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();
@@ -157,7 +157,7 @@ fn set_gpio_level_gpio_nonexistant_failure() {
 
     // when
     let request = test_server
-        .client(http::Method::GET, "/set/level/18/high")
+        .client(http::Method::GET, "/set/level/38/high")
         .finish()
         .unwrap();
     let response = test_server.execute(request.send()).unwrap();

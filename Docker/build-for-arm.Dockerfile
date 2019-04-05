@@ -17,7 +17,7 @@ RUN rustup target add armv7-unknown-linux-gnueabihf
 RUN export RUST_BACKTRACE=1
 
 # Specify working directory.
-# You should ind mount crate root on host to this directory
+# You should bind mount crate root on host to this directory
 WORKDIR /app
 
 # Using
