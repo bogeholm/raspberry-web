@@ -25,7 +25,3 @@ WORKDIR /app
 # since specifying linker in .cargo/config proved challenging
 ENTRYPOINT RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc" \
     cargo build --target=armv7-unknown-linux-gnueabihf
-
-# Same as WORKDIR + ENTRYPOINT above
-#ENTRYPOINT RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc" \
-#    cargo build --target=armv7-unknown-linux-gnueabihf --manifest-path=/app/Cargo.toml
