@@ -1,12 +1,10 @@
 # raspberry-web 
-[![Build status](https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg)](https://gitlab.com/bogeholm/raspberry-web/) 
+[![Build status](https://gitlab.com/bogeholm/raspberry-web/badges/master/build.svg)](https://gitlab.com/bogeholm/raspberry-web/pipelines/) 
 [![Build status](https://api.travis-ci.com/bogeholm/raspberry-web.svg?branch=master
 )](https://travis-ci.com/bogeholm/raspberry-web) 
-[![coverage report](https://gitlab.com/bogeholm/raspberry-web/badges/master/coverage.svg)](https://gitlab.com/bogeholm/raspberry-web/commits/master)
 [![Codecov](https://codecov.io/gl/bogeholm/raspberry-web/branch/master/graph/badge.svg)](https://codecov.io/gl/bogeholm/raspberry-web)
 [![dependency status](https://deps.rs/repo/github/bogeholm/raspberry-web/status.svg)](https://deps.rs/repo/github/bogeholm/raspberry-web) 
 [![crates.io](https://img.shields.io/crates/v/raspberry-web.svg)](https://crates.io/crates/raspberry-web) 
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 
 ## Control GPIO output on Raspberry Pi through a REST service 
