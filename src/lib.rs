@@ -1,3 +1,4 @@
+#![forbid(unsafe_code)]
 // to avoid the warning from diesel macros
 #![allow(proc_macro_derive_resolution_fallback)]
 
