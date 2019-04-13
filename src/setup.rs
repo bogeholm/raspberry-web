@@ -1,5 +1,9 @@
 use crate::errors::RpWebError;
-use crate::rpi::{set_gpio_level_rpi, GpioArcMutex};
+use crate::rpi::{
+    set_gpio_level_rpi, 
+    GpioArcMutex, 
+    reset_gpio_output_pin_rpi, 
+    set_reset_on_drop_false_for_output_pin_rpi};
 use crate::settings::GpioConfig;
 use crate::utilities::{set_gpio_in_use_db, set_gpio_level_db, set_gpio_mode_db};
 use diesel::SqliteConnection;
@@ -18,6 +22,9 @@ pub fn setup_rpi_and_db(
     if let Some(gpios_mode_output) = &gpioconfig.gpios_mode_output {
         for idx in gpios_mode_output.iter() {
             let _ = set_gpio_mode_db(*idx, "output", conn)?;
+
+            reset_gpio_output_pin_rpi(*idx, gpio_arc_mutex.clone())?;
+            set_reset_on_drop_false_for_output_pin_rpi(*idx, gpio_arc_mutex.clone())?;
         }
     }
 

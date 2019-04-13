@@ -39,7 +39,47 @@ pub fn set_gpio_level_rpi(
     Ok(())
 }
 
-#[allow(unused_mut)] // output_pin needs mut but generates a warning
+#[cfg(not(target_arch = "arm"))]
+pub fn reset_gpio_output_pin_rpi(
+    _gpio_id: i32, _gpio_arc_mutex: GpioArcMutex
+) -> Result<(), RpWebError> {
+    Ok(())
+}
+
+#[cfg(target_arch = "arm")]
+pub fn reset_gpio_output_pin_rpi(
+    gpio_id: i32, gpio_arc_mutex: GpioArcMutex
+) -> Result<(), RpWebError> {
+
+    let data = gpio_arc_mutex.lock();
+    let gpio_id_u8 = i32_to_u8(gpio_id)?;
+    let mut output_pin = (*data).get(gpio_id_u8)?.into_output();
+    output_pin.set_reset_on_drop(true);
+
+    Ok(())
+}
+
+#[cfg(not(target_arch = "arm"))]
+pub fn set_reset_on_drop_false_for_output_pin_rpi(
+    _gpio_id: i32, _gpio_arc_mutex: GpioArcMutex
+) -> Result<(), RpWebError> {
+    Ok(())
+}
+
+#[cfg(target_arch = "arm")]
+pub fn set_reset_on_drop_false_for_output_pin_rpi(
+    gpio_id: i32, gpio_arc_mutex: GpioArcMutex
+) -> Result<(), RpWebError> {
+
+    let data = gpio_arc_mutex.lock();
+    let gpio_id_u8 = i32_to_u8(gpio_id)?;
+    let mut output_pin = (*data).get(gpio_id_u8)?.into_output();
+    output_pin.set_reset_on_drop(false);
+
+    Ok(())
+}
+
+//#[allow(unused_mut)] // output_pin needs mut but generates a warning
 #[cfg(target_arch = "arm")]
 pub fn set_gpio_level_rpi(
     gpio_id: i32, level: &str, gpio_arc_mutex: GpioArcMutex,
@@ -47,9 +87,7 @@ pub fn set_gpio_level_rpi(
     let gpio_id_u8 = i32_to_u8(gpio_id)?;
     let data = gpio_arc_mutex.lock();
 
-    //let mut pin = (*data).get(gpio_num)?.into_output();
-    let mut pin = (*data).get(gpio_id_u8)?;
-    let mut output_pin = pin.into_output();
+    let mut output_pin = (*data).get(gpio_id_u8)?.into_output();
 
     match level {
         "high" => {
