@@ -67,6 +67,7 @@ def cp_if_dst_different(source, target):
     if os.path.isfile(target):
         if not filecmp.cmp(source, target, shallow=False):
             shutil.copy2(source, target)
+            print("Added new version of file " + highlight + target + endc + OK)
             return True
         else:
             print(highlight + target + endc + " already present in same version" + OK)
