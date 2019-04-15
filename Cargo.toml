@@ -10,21 +10,21 @@ keywords = ["raspberry", "pi", "gpio", "network"]
 repository = "https://github.com/bogeholm/raspberry-web"
 
 [dependencies]
-actix = "0.7.9"
-actix-web = "^0.7.18"
+actix = "^0.7.9"
+actix-web = "^0.7.19"
 chrono = { version = "^0.4.6", features = ["serde"] }
-clap = "^2.32.0"
+clap = "^2.33.0"
 config = "^0.9"
-diesel = { version = "^1.4.1", features = ["sqlite", "chrono", "r2d2"] }
+diesel = { version = "^1.4.2", features = ["sqlite", "chrono", "r2d2"] }
 dotenv = "^0.13.0"
-env_logger = "^0.6.0"
+env_logger = "^0.6.1"
 futures = "^0.1"
-log = { version = "^0.4", features = ["std", "serde"] }
+log = { version = "^0.4.6", features = ["std", "serde"] }
 parking_lot = "^0.7.1"
-r2d2 = "0.8.2"
+r2d2 = "^0.8.4"
 r2d2-diesel = "^1.0.0"
 serde="^1.0.89"
-serde_derive="^1.0.89"
+serde_derive="^1.0.90"
 serde_json="^1.0.39"
 
 [dev-dependencies]
