@@ -1,7 +1,6 @@
 # https://docs.travis-ci.com/user/languages/rust/
 
 language: rust
-
 sudo: required
 
 rust:
@@ -14,5 +13,13 @@ matrix:
     - rust: nightly
   fast_finish: true
 
-script:
-  - cargo test --verbose --all
+jobs:
+  include:
+    - stage: test
+      script:
+        - cargo test --verbose --all
+    - stage: clippy
+      before_script:
+        - rustup component add clippy
+      script:
+        - cargo clippy
