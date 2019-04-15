@@ -11,7 +11,7 @@ pub fn vec_option_to_vec(option: &Option<Vec<i32>>) -> Vec<i32> {
 }
 
 /// Return Some(vec) of elements in both u and v, else None
-fn elements_in_both_vecs(u: &Vec<i32>, v: &Vec<i32>) -> Option<Vec<i32>> {
+fn elements_in_both_vecs(u: &[i32], v: &[i32]) -> Option<Vec<i32>> {
     let mut res = vec![];
 
     // Iterate and push duplicate values
@@ -23,9 +23,9 @@ fn elements_in_both_vecs(u: &Vec<i32>, v: &Vec<i32>) -> Option<Vec<i32>> {
 
     // Return None if res is empty
     if !res.is_empty() {
-        return Some(res);
+        Some(res)
     } else {
-        return None;
+        None
     }
 }
 
@@ -48,20 +48,17 @@ pub fn validate_setup(gpioconfig: &GpioConfig) -> Result<(), RpWebError> {
     gpio_all_levels.append(&mut gpios_level_high.to_vec());
 
     // 'gpios_in_use' must be present if levels are set
-    if gpios_in_use.is_empty() {
-        if !gpio_all_levels.is_empty() {
-            return Err(RpWebError::new(
-                "Invalid configuration: gpio_levels_* is set, but gpios_in_use is empty",
-            ));
-        }
+    if gpios_in_use.is_empty() && !gpio_all_levels.is_empty() {
+        return Err(RpWebError::new(
+            "Invalid configuration: gpio_levels_* is set, but gpios_in_use is empty",
+        ));
     }
+
     // 'gpios_mode_output' be present if levels are set
-    if gpios_mode_output.is_empty() {
-        if !gpio_all_levels.is_empty() {
-            return Err(RpWebError::new(
-                "Invalid configuration: gpios_level_* is set, but gpios_mode_output is empty",
-            ));
-        }
+    if gpios_mode_output.is_empty() && !gpio_all_levels.is_empty() {
+        return Err(RpWebError::new(
+            "Invalid configuration: gpios_level_* is set, but gpios_mode_output is empty",
+        ));
     }
 
     // Find misconfigured gpios

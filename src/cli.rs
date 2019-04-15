@@ -2,7 +2,7 @@ use clap::{App, Arg, ArgMatches};
 
 /// Parse command line arguments
 pub fn get_cli_args() -> ArgMatches<'static> {
-    let cli_args = App::new("Raspberry Web")
+    App::new("Raspberry Web")
         .author("Troels Mikkelsen <troelsmikkelsen@gmail.com>")
         .about("Control GPIO ports on your Raspberry Pi over the network")
         .arg(
@@ -14,7 +14,5 @@ pub fn get_cli_args() -> ArgMatches<'static> {
                 .takes_value(true)
                 .required(false),
         )
-        .get_matches();
-
-    cli_args
+        .get_matches()
 }

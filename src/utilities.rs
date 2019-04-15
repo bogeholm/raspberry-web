@@ -160,7 +160,7 @@ pub fn set_gpio_level_db(id: i32, level: &str, conn: &SqliteConnection) -> Resul
 
 /// Convert x: i32 to u8 if MIN(u8)=0 x <= x <= MAX(u8)=255
 pub fn i32_to_u8(x: i32) -> Result<u8, RpWebError> {
-    if MIN as i32 <= x && x <= MAX as i32 {
+    if i32::from(MIN) <= x && x <= i32::from(MAX) {
         Ok(x as u8)
     } else {
         let errs = format!("Not satisfied: {} <= {} <= {}", MIN, x, MAX);

@@ -121,10 +121,11 @@ impl Handler<CheckGpioLevel> for DbExecutor {
 
         let allowed = state_map
             .get::<str>(&desired_level)
-            .ok_or(error::ErrorNotFound(format!(
+            .ok_or_else(|| error::ErrorNotFound(format!(
                 "Level '{}' is not a recognized GPIO state'",
                 desired_level
             )))?;
+
         if !allowed {
             info!(
                 "Level '{}' is not an allowed state for GPIO #{}",
@@ -163,7 +164,7 @@ impl Handler<SetGpioLevel> for DbExecutor {
             .load::<models::Gpio>(connection)
             .map_err(|_| error::ErrorInternalServerError("Error loading from database"))?;
 
-        gpio_vec_after.pop().ok_or(
+        gpio_vec_after.pop().ok_or_else(||
             // At this point we msg.gpio.id is in db
             error::ErrorInternalServerError("Could not connect to database"),
         )
