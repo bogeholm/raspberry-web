@@ -15,7 +15,7 @@ actix-web = "^0.7.19"
 chrono = { version = "^0.4.6", features = ["serde"] }
 clap = "^2.33.0"
 config = "^0.9"
-diesel = { version = "^1.4.2", features = ["sqlite", "chrono", "r2d2"] }
+diesel = { version = "^1.4.6", features = ["sqlite", "chrono", "r2d2"] }
 dotenv = "^0.13.0"
 env_logger = "^0.6.1"
 futures = "^0.1"
